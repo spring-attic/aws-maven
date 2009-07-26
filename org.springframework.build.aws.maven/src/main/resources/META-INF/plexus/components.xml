@@ -1,0 +1,10 @@
+<component-set>
+    <components>
+        <component>
+            <role>org.apache.maven.wagon.Wagon</role>
+            <role-hint>s3</role-hint>
+            <implementation>org.springframework.aws.maven.SimpleStorageServiceWagon</implementation>
+            <instantiation-strategy>per-lookup</instantiation-strategy>
+        </component>
+    </components>
+</component-set>
