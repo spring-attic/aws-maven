@@ -18,7 +18,7 @@ package org.springframework.aws.maven;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
-import org.apache.maven.wagon.proxy.ProxyInfo;
+import org.apache.maven.wagon.proxy.ProxyInfoProvider;
 import org.apache.maven.wagon.repository.Repository;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -60,7 +60,7 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
 		super(false);
 	}
 
-	protected void connectToRepository(Repository source, AuthenticationInfo authenticationInfo, ProxyInfo proxyInfo)
+	protected void connectToRepository(Repository source, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
 			throws AuthenticationException {
 		try {
 			service = new RestS3Service(getCredentials(authenticationInfo));

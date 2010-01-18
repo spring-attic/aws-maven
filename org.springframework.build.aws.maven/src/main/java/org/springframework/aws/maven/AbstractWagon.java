@@ -26,6 +26,7 @@ import org.apache.maven.wagon.events.SessionListener;
 import org.apache.maven.wagon.events.TransferEvent;
 import org.apache.maven.wagon.events.TransferListener;
 import org.apache.maven.wagon.proxy.ProxyInfo;
+import org.apache.maven.wagon.proxy.ProxyInfoProvider;
 import org.apache.maven.wagon.repository.Repository;
 import org.apache.maven.wagon.resource.Resource;
 
@@ -50,6 +51,8 @@ public abstract class AbstractWagon implements Wagon {
 	private SessionListenerSupport sessionListeners = new SessionListenerSupport(this);
 
 	private TransferListenerSupport transferListeners = new TransferListenerSupport(this);
+
+	private int timeout;
 
 	protected AbstractWagon(boolean supportsDirectoryCopy) {
 		this.supportsDirectoryCopy = supportsDirectoryCopy;
@@ -100,7 +103,7 @@ public abstract class AbstractWagon implements Wagon {
 	}
 
 	public final void connect(Repository source) throws ConnectionException, AuthenticationException {
-		connect(source, null, null);
+		connect(source, null, (ProxyInfoProvider)null);
 	}
 
 	public final void connect(Repository source, ProxyInfo proxyInfo) throws ConnectionException,
@@ -110,15 +113,33 @@ public abstract class AbstractWagon implements Wagon {
 
 	public final void connect(Repository source, AuthenticationInfo authenticationInfo) throws ConnectionException,
 			AuthenticationException {
-		connect(source, authenticationInfo, null);
+		connect(source, authenticationInfo, (ProxyInfoProvider)null);
 	}
 
-	public final void connect(Repository source, AuthenticationInfo authenticationInfo, ProxyInfo proxyInfo)
+	public void connect(Repository source, ProxyInfoProvider proxyInfoProvider) throws ConnectionException, AuthenticationException {
+		connect(source, null, proxyInfoProvider);
+	}
+
+	public void connect(Repository source, AuthenticationInfo authenticationInfo, ProxyInfo proxyInfo) throws ConnectionException, AuthenticationException {
+		final ProxyInfo proxy = proxyInfo;
+		connect(source, authenticationInfo, new ProxyInfoProvider() {
+			public ProxyInfo getProxyInfo(String protocol) {
+				if (protocol == null || proxy == null || protocol.equalsIgnoreCase(proxy.getType())) {
+					return proxy;
+				}
+				else {
+					return null;
+				}
+			}
+		} );
+	}
+
+	public final void connect(Repository source, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
 			throws ConnectionException, AuthenticationException {
 		repository = source;
 		sessionListeners.fireSessionOpening();
 		try {
-			connectToRepository(source, authenticationInfo, proxyInfo);
+			connectToRepository(source, authenticationInfo, proxyInfoProvider);
 		}
 		catch (ConnectionException e) {
 			sessionListeners.fireSessionConnectionRefused();
@@ -284,9 +305,17 @@ public abstract class AbstractWagon implements Wagon {
 		return supportsDirectoryCopy;
 	}
 
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
 	/**
 	 * Subclass must implement with specific connection behavior
-	 * 
+	 *
 	 * @param source The repository connection information
 	 * @param authenticationInfo Authentication information, if any
 	 * @param proxyInfo Proxy information, if any
@@ -294,7 +323,7 @@ public abstract class AbstractWagon implements Wagon {
 	 * handled by the base class
 	 */
 	protected abstract void connectToRepository(Repository source, AuthenticationInfo authenticationInfo,
-			ProxyInfo proxyInfo) throws Exception;
+			ProxyInfoProvider proxyInfo) throws Exception;
 
 	/**
 	 * Subclass must implement with specific detection behavior
