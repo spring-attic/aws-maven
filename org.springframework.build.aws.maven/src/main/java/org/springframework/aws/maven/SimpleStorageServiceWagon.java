@@ -16,19 +16,6 @@
 
 package org.springframework.aws.maven;
 
-import org.apache.maven.wagon.ResourceDoesNotExistException;
-import org.apache.maven.wagon.authentication.AuthenticationException;
-import org.apache.maven.wagon.authentication.AuthenticationInfo;
-import org.apache.maven.wagon.proxy.ProxyInfoProvider;
-import org.apache.maven.wagon.repository.Repository;
-import org.jets3t.service.S3Service;
-import org.jets3t.service.S3ServiceException;
-import org.jets3t.service.acl.AccessControlList;
-import org.jets3t.service.impl.rest.httpclient.RestS3Service;
-import org.jets3t.service.model.S3Bucket;
-import org.jets3t.service.model.S3Object;
-import org.jets3t.service.security.AWSCredentials;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,6 +24,22 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.maven.wagon.ResourceDoesNotExistException;
+import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
+import org.apache.maven.wagon.proxy.ProxyInfo;
+import org.apache.maven.wagon.proxy.ProxyInfoProvider;
+import org.apache.maven.wagon.repository.Repository;
+import org.jets3t.service.Jets3tProperties;
+import org.jets3t.service.S3Service;
+import org.jets3t.service.S3ServiceException;
+import org.jets3t.service.ServiceException;
+import org.jets3t.service.acl.AccessControlList;
+import org.jets3t.service.impl.rest.httpclient.RestS3Service;
+import org.jets3t.service.model.S3Bucket;
+import org.jets3t.service.model.S3Object;
+import org.jets3t.service.security.AWSCredentials;
 
 /**
  * An implementation of the Maven Wagon interface that allows you to access the
@@ -64,7 +67,14 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
 	protected void connectToRepository(Repository source, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
 			throws AuthenticationException {
 		try {
-			service = new RestS3Service(getCredentials(authenticationInfo));
+			Jets3tProperties jets3tProperties = new Jets3tProperties();
+			ProxyInfo proxyInfo = proxyInfoProvider.getProxyInfo("http");
+			if (proxyInfo != null) {
+				jets3tProperties.setProperty("httpclient.proxy-autodetect", "false");
+				jets3tProperties.setProperty("httpclient.proxy-host", proxyInfo.getHost());
+				jets3tProperties.setProperty("httpclient.proxy-port", new Integer(proxyInfo.getPort()).toString());
+			}
+			service = new RestS3Service(getCredentials(authenticationInfo), "mavens3wagon", null, jets3tProperties);
 		}
 		catch (S3ServiceException e) {
 			throw new AuthenticationException("Cannot authenticate with current credentials", e);
@@ -104,7 +114,11 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
 		InputStream in = null;
 		OutputStream out = null;
 		try {
-			in = object.getDataInputStream();
+			try {
+				in = object.getDataInputStream();
+			} catch (ServiceException se) {
+				throw new IllegalStateException(se);
+			}
 			out = new TransferProgressFileOutputStream(destination, progress);
 			byte[] buffer = new byte[1024];
 			int length;
