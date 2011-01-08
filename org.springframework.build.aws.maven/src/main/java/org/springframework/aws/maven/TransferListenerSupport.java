@@ -25,107 +25,123 @@ import org.apache.maven.wagon.events.TransferListener;
 import org.apache.maven.wagon.resource.Resource;
 
 /**
- * Support for sending messages to Maven transfer listeners. Automates the
- * collection of listeners and the iteration over that collection when an event
- * is fired.
+ * Support for sending messages to Maven transfer listeners. Automates the collection of listeners and the iteration
+ * over that collection when an event is fired.
  * 
  * @author Ben Hale
  */
-class TransferListenerSupport {
+final class TransferListenerSupport {
 
-	private Wagon wagon;
+    private final Wagon wagon;
 
-	private Set<TransferListener> listeners = new HashSet<TransferListener>();
+    private final Set<TransferListener> listeners = new HashSet<TransferListener>();
 
-	/**
-	 * Creates a new instance
-	 * @param wagon The wagon that events will come from
-	 */
-	public TransferListenerSupport(Wagon wagon) {
-		this.wagon = wagon;
-	}
+    /**
+     * Creates a new instance
+     * 
+     * @param wagon The wagon that events will come from
+     */
+    TransferListenerSupport(Wagon wagon) {
+        this.wagon = wagon;
+    }
 
-	/**
-	 * Adds a listener to the collection
-	 * @param listener The listener to add
-	 */
-	public void addListener(TransferListener listener) {
-		listeners.add(listener);
-	}
+    /**
+     * Adds a listener to the collection
+     * 
+     * @param listener The listener to add
+     */
+    void addListener(TransferListener listener) {
+        this.listeners.add(listener);
+    }
 
-	/**
-	 * Removes a listener from the collection
-	 * @param listener The listener to remove
-	 */
-	public void removeListener(TransferListener listener) {
-		listeners.remove(listener);
-	}
+    /**
+     * Removes a listener from the collection
+     * 
+     * @param listener The listener to remove
+     */
+    void removeListener(TransferListener listener) {
+        this.listeners.remove(listener);
+    }
 
-	/**
-	 * Whether the collection already contains a listener
-	 * @param listener The listener to check for
-	 * @return whether the collection contains the listener
-	 */
-	public boolean hasListener(TransferListener listener) {
-		return listeners.contains(listener);
-	}
+    /**
+     * Whether the collection already contains a listener
+     * 
+     * @param listener The listener to check for
+     * @return whether the collection contains the listener
+     */
+    boolean hasListener(TransferListener listener) {
+        return this.listeners.contains(listener);
+    }
 
-	/**
-	 * Sends a transfer initated event to all listeners
-	 * @param resource The resource being transfered
-	 * @param requestType GET or PUT request
-	 * @see TransferEvent#TRANSFER_INITIATED
-	 */
-	public void fireTransferInitiated(Resource resource, int requestType) {
-		TransferEvent event = new TransferEvent(wagon, resource, TransferEvent.TRANSFER_INITIATED, requestType);
-		for (TransferListener listener : listeners) {
-			listener.transferInitiated(event);
-		}
-	}
+    /**
+     * Sends a transfer initated event to all listeners
+     * 
+     * @param resource The resource being transfered
+     * @param requestType GET or PUT request
+     * @see TransferEvent#TRANSFER_INITIATED
+     */
+    void fireTransferInitiated(Resource resource, int requestType) {
+        TransferEvent event = new TransferEvent(this.wagon, resource, TransferEvent.TRANSFER_INITIATED, requestType);
+        for (TransferListener listener : this.listeners) {
+            listener.transferInitiated(event);
+        }
+    }
 
-	/**
-	 * Sends a transfer started event to all listeners
-	 * @param resource The resource being transfered
-	 * @param requestType GET or PUT request
-	 * @see TransferEvent#TRANSFER_STARTED
-	 */
-	public void fireTransferStarted(Resource resource, int requestType) {
-		TransferEvent event = new TransferEvent(wagon, resource, TransferEvent.TRANSFER_STARTED, requestType);
-		for (TransferListener listener : listeners) {
-			listener.transferStarted(event);
-		}
-	}
+    /**
+     * Sends a transfer started event to all listeners
+     * 
+     * @param resource The resource being transfered
+     * @param requestType GET or PUT request
+     * @see TransferEvent#TRANSFER_STARTED
+     */
+    void fireTransferStarted(Resource resource, int requestType) {
+        TransferEvent event = new TransferEvent(this.wagon, resource, TransferEvent.TRANSFER_STARTED, requestType);
+        for (TransferListener listener : this.listeners) {
+            listener.transferStarted(event);
+        }
+    }
 
-	public void fireTransferProgress(Resource resource, int requestType, byte[] buffer, int length) {
-		TransferEvent event = new TransferEvent(wagon, resource, TransferEvent.TRANSFER_PROGRESS, requestType);
-		for (TransferListener listener : listeners) {
-			listener.transferProgress(event, buffer, length);
-		}
-	}
+    /**
+     * Sends a transfer progress event to all listeners
+     * 
+     * @param resource The resource being transfered
+     * @param requestType GET or PUT request
+     * @param buffer The buffer that was sent
+     * @param length The length of the data that was sent
+     * @see TransferEvent#TRANSFER_PROGRESS
+     */
+    void fireTransferProgress(Resource resource, int requestType, byte[] buffer, int length) {
+        TransferEvent event = new TransferEvent(this.wagon, resource, TransferEvent.TRANSFER_PROGRESS, requestType);
+        for (TransferListener listener : this.listeners) {
+            listener.transferProgress(event, buffer, length);
+        }
+    }
 
-	/**
-	 * Sends a transfer completed event to all listeners
-	 * @param resource The resource being transfered
-	 * @param requestType GET or PUT request
-	 * @see TransferEvent#TRANSFER_COMPLETED
-	 */
-	public void fireTransferCompleted(Resource resource, int requestType) {
-		TransferEvent event = new TransferEvent(wagon, resource, TransferEvent.TRANSFER_COMPLETED, requestType);
-		for (TransferListener listener : listeners) {
-			listener.transferCompleted(event);
-		}
-	}
+    /**
+     * Sends a transfer completed event to all listeners
+     * 
+     * @param resource The resource being transfered
+     * @param requestType GET or PUT request
+     * @see TransferEvent#TRANSFER_COMPLETED
+     */
+    void fireTransferCompleted(Resource resource, int requestType) {
+        TransferEvent event = new TransferEvent(this.wagon, resource, TransferEvent.TRANSFER_COMPLETED, requestType);
+        for (TransferListener listener : this.listeners) {
+            listener.transferCompleted(event);
+        }
+    }
 
-	/**
-	 * Sends a transfer error event to all listeners
-	 * @param resource The resource being transfered
-	 * @param requestType GET or PUT request
-	 * @param e The transfer error
-	 */
-	public void fireTransferError(Resource resource, int requestType, Exception e) {
-		TransferEvent event = new TransferEvent(wagon, resource, e, requestType);
-		for (TransferListener listener : listeners) {
-			listener.transferError(event);
-		}
-	}
+    /**
+     * Sends a transfer error event to all listeners
+     * 
+     * @param resource The resource being transfered
+     * @param requestType GET or PUT request
+     * @param e The transfer error
+     */
+    void fireTransferError(Resource resource, int requestType, Exception e) {
+        TransferEvent event = new TransferEvent(this.wagon, resource, e, requestType);
+        for (TransferListener listener : this.listeners) {
+            listener.transferError(event);
+        }
+    }
 }
