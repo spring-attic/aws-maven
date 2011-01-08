@@ -4,14 +4,18 @@
 		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>org.springframework.build.aws</groupId>
 	<artifactId>org.springframework.build.aws.maven</artifactId>
 	<packaging>jar</packaging>
-	<name>Amazon Web Services Maven Wagon Support</name>
 	<version>3.1.0.RELEASE</version>
+	<name>Amazon Web Services Maven Wagon Support</name>
 	<description>Standard Maven wagon support for s3:// urls</description>
+
 	<url>http://www.springframework.org</url>
+
 	<inceptionYear>2007</inceptionYear>
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -19,51 +23,105 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
 	<scm>
 		<connection>scm:git:git://git.springsource.org/spring-build/aws-maven.git</connection>
 	</scm>
+
 	<organization>
 		<name>Spring Framework</name>
 		<url>http://www.springframework.org</url>
 	</organization>
+
+	<properties>
+		<httpclient.version>3.1</httpclient.version>
+		<jets3t.version>0.8.0</jets3t.version>
+		<wagon.version>1.0-beta-6</wagon.version>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<build>
+		<finalName>org.springframework.build.aws.maven</finalName>
+
 		<extensions>
 			<extension>
 				<groupId>org.springframework.build.aws</groupId>
 				<artifactId>org.springframework.build.aws.maven</artifactId>
-				<version>2.0.0.RELEASE</version>
+				<version>3.0.0.RELEASE</version>
 			</extension>
 		</extensions>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.1</version>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.2</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<includes>
+						<include>**/*Test.java</include>
+						<include>**/*Tests.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/Abstract*Test.java</exclude>
+						<exclude>**/Abstract*Tests.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.7</version>  <!--  Note 2.8 does not work with AspectJ aspect path -->
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
+			<version>${httpclient.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.jets3t</groupId>
 			<artifactId>jets3t</artifactId>
-			<version>0.7.2</version>
+			<version>${jets3t.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.wagon</groupId>
 			<artifactId>wagon-provider-api</artifactId>
-			<version>1.0-beta-6</version>
+			<version>${wagon.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+
 	<distributionManagement>
 		<repository>
 			<id>spring-milestone</id>
@@ -76,4 +134,5 @@
 			<url>s3://maven.springframework.org/snapshot</url>
 		</snapshotRepository>
 	</distributionManagement>
+
 </project>
