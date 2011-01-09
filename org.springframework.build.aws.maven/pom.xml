@@ -48,7 +48,7 @@
 			<extension>
 				<groupId>org.springframework.build.aws</groupId>
 				<artifactId>org.springframework.build.aws.maven</artifactId>
-				<version>3.0.0.RELEASE</version>
+				<version>${project.version}</version>
 			</extension>
 		</extensions>
 
@@ -124,7 +124,7 @@
 	<distributionManagement>
 		<repository>
 			<id>spring-release</id>
-			<name>Spring Relase Repository</name>
+			<name>Spring Release Repository</name>
 			<url>s3://maven.springframework.org/release</url>
 		</repository>
 		<snapshotRepository>

@@ -69,11 +69,13 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
         throws AuthenticationException {
         try {
             Jets3tProperties jets3tProperties = new Jets3tProperties();
-            ProxyInfo proxyInfo = proxyInfoProvider.getProxyInfo("http");
-            if (proxyInfo != null) {
-                jets3tProperties.setProperty("httpclient.proxy-autodetect", "false");
-                jets3tProperties.setProperty("httpclient.proxy-host", proxyInfo.getHost());
-                jets3tProperties.setProperty("httpclient.proxy-port", new Integer(proxyInfo.getPort()).toString());
+            if (proxyInfoProvider != null) {
+                ProxyInfo proxyInfo = proxyInfoProvider.getProxyInfo("http");
+                if (proxyInfo != null) {
+                    jets3tProperties.setProperty("httpclient.proxy-autodetect", "false");
+                    jets3tProperties.setProperty("httpclient.proxy-host", proxyInfo.getHost());
+                    jets3tProperties.setProperty("httpclient.proxy-port", new Integer(proxyInfo.getPort()).toString());
+                }
             }
             this.service = new RestS3Service(getCredentials(authenticationInfo), "mavens3wagon", null, jets3tProperties);
         } catch (S3ServiceException e) {
