@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.aws.maven;
+package org.springframework.build.aws.maven;
 
 import org.apache.maven.wagon.resource.Resource;
 

@@ -13,12 +13,70 @@
 	<description>Standard Maven wagon support for s3:// urls</description>
 
 	<properties>
+		<amazonaws.version>1.2.12</amazonaws.version>
+		<junit.version>4.10</junit.version>
+		<logback.version>1.0.0</logback.version>
+		<mockito.version>1.8.5</mockito.version>
+		<slf4j.version>1.6.4</slf4j.version>
+		
 		<httpclient.version>3.1</httpclient.version>
 		<jets3t.version>0.8.0</jets3t.version>
-		<wagon.version>1.0-beta-6</wagon.version>
+		<wagon.version>2.1</wagon.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>${amazonaws.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.mail</groupId>
+					<artifactId>mail</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>stax</groupId>
+					<artifactId>stax-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>stax</groupId>
+					<artifactId>stax</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit-dep</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.wagon</groupId>
+			<artifactId>wagon-provider-api</artifactId>
+			<version>${wagon.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<extensions>
@@ -28,6 +86,41 @@
 				<version>3.1.0.RELEASE</version>
 			</extension>
 		</extensions>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-compiler-plugin</artifactId>
+										<versionRange>[2.0,)</versionRange>
+										<goals>
+											<goal>compile</goal>
+											<goal>testCompile</goal>
+										</goals>
+										<parameters>
+											<compilerId>eclipse</compilerId>
+										</parameters>
+									</pluginExecutionFilter>
+									<action>
+										<configurator>
+											<id>org.eclipse.m2e.jdt.javaConfigurator</id>
+										</configurator>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 
 		<plugins>
 			<plugin>
@@ -86,57 +179,8 @@
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>2.0</version>
 			</plugin>
-			<plugin>
-				<groupId>org.eclipse.m2e</groupId>
-				<artifactId>lifecycle-mapping</artifactId>
-				<version>1.0.0</version>
-				<configuration>
-					<lifecycleMappingMetadata>
-						<pluginExecutions>
-							<pluginExecution>
-								<pluginExecutionFilter>
-									<groupId>org.apache.maven.plugins</groupId>
-									<artifactId>maven-compiler-plugin</artifactId>
-									<versionRange>[2.0,)</versionRange>
-									<goals>
-										<goal>compile</goal>
-										<goal>testCompile</goal>
-									</goals>
-									<parameters>
-										<compilerId>eclipse</compilerId>
-									</parameters>
-								</pluginExecutionFilter>
-								<action>
-									<configurator>
-										<id>org.eclipse.m2e.jdt.javaConfigurator</id>
-									</configurator>
-								</action>
-							</pluginExecution>
-						</pluginExecutions>
-					</lifecycleMappingMetadata>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>${httpclient.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.java.dev.jets3t</groupId>
-			<artifactId>jets3t</artifactId>
-			<version>${jets3t.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.wagon</groupId>
-			<artifactId>wagon-provider-api</artifactId>
-			<version>${wagon.version}</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
 
 	<pluginRepositories>
 		<pluginRepository>
@@ -175,9 +219,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git://git.springsource.org/spring-build/aws-maven.git</connection>
-		<developerConnection>scm:git:ssh://git@git.springsource.org:spring-build/aws-maven.git</developerConnection>
-		<url>http://git.springsource.org/spring-build/aws-maven</url>
+		<connection>scm:git:https://github.com/SpringSource/aws-maven.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:spring-build/aws-maven.git</developerConnection>
+		<url>https://github.com/SpringSource/aws-maven</url>
 	</scm>
 
 	<organization>
