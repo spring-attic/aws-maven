@@ -2,7 +2,7 @@
 
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%level: %msg%n</pattern>
+			<pattern>%-5level %msg%n</pattern>
 		</encoder>
 	</appender>
 	

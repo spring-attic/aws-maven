@@ -1,11 +1,11 @@
 /*
- * Copyright 2010 SpringSource
+ * Copyright 2010-2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,30 +16,36 @@
 
 package org.springframework.build.aws.maven;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.maven.wagon.ResourceDoesNotExistException;
+import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
-import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.apache.maven.wagon.proxy.ProxyInfoProvider;
 import org.apache.maven.wagon.repository.Repository;
-import org.jets3t.service.Jets3tProperties;
-import org.jets3t.service.S3Service;
-import org.jets3t.service.S3ServiceException;
-import org.jets3t.service.ServiceException;
-import org.jets3t.service.acl.AccessControlList;
-import org.jets3t.service.impl.rest.httpclient.RestS3Service;
-import org.jets3t.service.model.S3Object;
-import org.jets3t.service.model.StorageObject;
-import org.jets3t.service.security.AWSCredentials;
+
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 /**
  * An implementation of the Maven Wagon interface that allows you to access the Amazon S3 service. URLs that reference
@@ -49,181 +55,188 @@ import org.jets3t.service.security.AWSCredentials;
  * <p/>
  * This implementation uses the <code>username</code> and <code>passphrase</code> portions of the server authentication
  * metadata for credentials.
- * 
- * @author Ben Hale
  */
 public final class SimpleStorageServiceWagon extends AbstractWagon {
 
-    private S3Service service;
+    private static final String KEY_FORMAT = "%s%s";
 
-    private String bucket;
+    private static final String RESOURCE_FORMAT = "%s(.*)";
 
-    private String basedir;
+    private volatile AmazonS3 amazonS3;
+
+    private volatile String bucketName;
+
+    private volatile String baseDirectory;
 
     public SimpleStorageServiceWagon() {
-        super(false);
+        super(true);
+    }
+
+    SimpleStorageServiceWagon(AmazonS3 amazonS3, String bucketName, String baseDirectory) {
+        super(true);
+        this.amazonS3 = amazonS3;
+        this.bucketName = bucketName;
+        this.baseDirectory = baseDirectory;
     }
 
     @Override
-    protected void connectToRepository(Repository source, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
+    protected void connectToRepository(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
         throws AuthenticationException {
-        try {
-            Jets3tProperties jets3tProperties = new Jets3tProperties();
-            if (proxyInfoProvider != null) {
-                ProxyInfo proxyInfo = proxyInfoProvider.getProxyInfo("http");
-                if (proxyInfo != null) {
-                    jets3tProperties.setProperty("httpclient.proxy-autodetect", "false");
-                    jets3tProperties.setProperty("httpclient.proxy-host", proxyInfo.getHost());
-                    jets3tProperties.setProperty("httpclient.proxy-port", new Integer(proxyInfo.getPort()).toString());
-                }
-            }
-            this.service = new RestS3Service(getCredentials(authenticationInfo), "mavens3wagon", null, jets3tProperties);
-        } catch (S3ServiceException e) {
-            throw new AuthenticationException("Cannot authenticate with current credentials", e);
+        if (this.amazonS3 == null) {
+            AWSCredentials awsCredentials = authenticationInfo == null ? null : new AuthenticationInfoAWSCredentials(authenticationInfo);
+            ClientConfiguration clientConfiguration = S3Utils.getClientConfiguration(proxyInfoProvider);
+
+            this.amazonS3 = new AmazonS3Client(awsCredentials, clientConfiguration);
+            this.bucketName = S3Utils.getBucketName(repository);
+            this.baseDirectory = S3Utils.getBaseDirectory(repository);
         }
-        this.bucket = source.getHost();
-        this.basedir = getBaseDir(source);
+    }
+
+    @Override
+    protected void disconnectFromRepository() {
+        this.amazonS3 = null;
+        this.bucketName = null;
+        this.baseDirectory = null;
     }
 
     @Override
     protected boolean doesRemoteResourceExist(String resourceName) {
         try {
-            this.service.getObjectDetails(this.bucket, this.basedir + resourceName);
-        } catch (ServiceException e) {
+            getObjectMetadata(resourceName);
+            return true;
+        } catch (AmazonServiceException e) {
             return false;
         }
-        return true;
     }
 
     @Override
-    protected void disconnectFromRepository() {
-        // Nothing to do for S3
-    }
-
-    @Override
-    protected void getResource(String resourceName, File destination, TransferProgress progress) throws ResourceDoesNotExistException,
-        S3ServiceException, IOException {
-        S3Object object;
+    protected boolean isRemoteResourceNewer(String resourceName, long timestamp) throws TransferFailedException {
         try {
-            object = this.service.getObject(this.bucket, this.basedir + resourceName);
-        } catch (S3ServiceException e) {
-            throw new ResourceDoesNotExistException("Resource " + resourceName + " does not exist in the repository", e);
+            Date lastModified = getObjectMetadata(resourceName).getLastModified();
+            return lastModified == null ? true : lastModified.getTime() > timestamp;
+        } catch (AmazonServiceException e) {
+            throw new TransferFailedException(String.format("'%s' does not exist", resourceName), e);
         }
+    }
 
-        if (!destination.getParentFile().exists()) {
-            destination.getParentFile().mkdirs();
+    @Override
+    protected List<String> listDirectory(String directory) throws TransferFailedException {
+        List<String> directoryContents = new ArrayList<String>();
+
+        try {
+            String prefix = getKey(directory);
+            Pattern pattern = Pattern.compile(String.format(RESOURCE_FORMAT, prefix));
+
+            ListObjectsRequest listObjectsRequest = new ListObjectsRequest() //
+            .withBucketName(this.bucketName) //
+            .withPrefix(prefix) //
+            .withDelimiter("/");
+
+            ObjectListing objectListing;
+
+            objectListing = this.amazonS3.listObjects(listObjectsRequest);
+            directoryContents.addAll(getResourceNames(objectListing, pattern));
+
+            while (objectListing.isTruncated()) {
+                objectListing = this.amazonS3.listObjects(listObjectsRequest);
+                directoryContents.addAll(getResourceNames(objectListing, pattern));
+            }
+
+            return directoryContents;
+        } catch (AmazonServiceException e) {
+            throw new TransferFailedException(String.format("'%s' does not exist", directory), e);
         }
+    }
 
+    @Override
+    protected void getResource(String resourceName, File destination, TransferProgress transferProgress) throws TransferFailedException {
         InputStream in = null;
         OutputStream out = null;
         try {
-            try {
-                in = object.getDataInputStream();
-            } catch (ServiceException se) {
-                throw new IllegalStateException(se);
-            }
-            out = new TransferProgressFileOutputStream(destination, progress);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer)) != -1) {
-                out.write(buffer, 0, length);
-            }
+            S3Object s3Object = this.amazonS3.getObject(this.bucketName, getKey(resourceName));
+
+            in = s3Object.getObjectContent();
+            out = new TransferProgressFileOutputStream(destination, transferProgress);
+
+            IoUtils.copy(in, out);
+        } catch (AmazonServiceException e) {
+            throw new TransferFailedException(String.format("'%s' does not exist", resourceName), e);
+        } catch (FileNotFoundException e) {
+            throw new TransferFailedException(String.format("Cannot write file to '%s'", destination), e);
+        } catch (IOException e) {
+            throw new TransferFailedException(String.format("Cannot read from '%s' and write to '%s'", resourceName, destination), e);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // Nothing possible at this point
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    // Nothing possible at this point
-                }
-            }
+            IoUtils.closeQuietly(in, out);
         }
     }
 
     @Override
-    protected boolean isRemoteResourceNewer(String resourceName, long timestamp) throws ServiceException {
-        StorageObject object = this.service.getObjectDetails(this.bucket, this.basedir + resourceName);
-        return object.getLastModifiedDate().compareTo(new Date(timestamp)) < 0;
-    }
+    protected void putResource(File source, String destination, TransferProgress transferProgress) throws TransferFailedException {
+        String key = getKey(destination);
 
-    @Override
-    protected List<String> listDirectory(String directory) throws Exception {
-        S3Object[] objects = this.service.listObjects(this.bucket, this.basedir + directory, "");
-        List<String> fileNames = new ArrayList<String>(objects.length);
-        for (S3Object object : objects) {
-            fileNames.add(object.getKey());
-        }
-        return fileNames;
-    }
+        mkdirs(key, 0);
 
-    @Override
-    protected void putResource(File source, String destination, TransferProgress progress) throws S3ServiceException, IOException {
-        buildDestinationPath(getDestinationPath(destination));
-        S3Object object = new S3Object(this.basedir + destination);
-        object.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
-        object.setDataInputFile(source);
-        object.setContentLength(source.length());
-
-        InputStream in = null;
         try {
-            this.service.putObject(this.bucket, object);
+            this.amazonS3.putObject(new PutObjectRequest(this.bucketName, key, source).withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (AmazonServiceException e) {
+            throw new TransferFailedException(String.format("Cannot write file to '%s'", destination), e);
+        }
+    }
 
-            in = new FileInputStream(source);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer)) != -1) {
-                progress.notify(buffer, length);
+    private ObjectMetadata getObjectMetadata(String resourceName) {
+        return this.amazonS3.getObjectMetadata(this.bucketName, getKey(resourceName));
+    }
+
+    private String getKey(String resourceName) {
+        return String.format(KEY_FORMAT, this.baseDirectory, resourceName);
+    }
+
+    private List<String> getResourceNames(ObjectListing objectListing, Pattern pattern) {
+        List<String> resourceNames = new ArrayList<String>();
+
+        for (String commonPrefix : objectListing.getCommonPrefixes()) {
+            resourceNames.add(getResourceName(commonPrefix, pattern));
+        }
+
+        for (S3ObjectSummary s3ObjectSummary : objectListing.getObjectSummaries()) {
+            resourceNames.add(getResourceName(s3ObjectSummary.getKey(), pattern));
+        }
+
+        return resourceNames;
+    }
+
+    private String getResourceName(String key, Pattern pattern) {
+        Matcher matcher = pattern.matcher(key);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return key;
+    }
+
+    private void mkdirs(String path, int index) throws TransferFailedException {
+        int directoryIndex = path.indexOf('/', index) + 1;
+
+        if (directoryIndex != 0) {
+            String directory = path.substring(0, directoryIndex);
+            PutObjectRequest putObjectRequest = createDirectoryPutObjectRequest(directory);
+
+            try {
+                this.amazonS3.putObject(putObjectRequest);
+            } catch (AmazonServiceException e) {
+                throw new TransferFailedException(String.format("Cannot write directory '%s'", directory), e);
             }
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // Nothing possible at this point
-                }
-            }
+
+            mkdirs(path, directoryIndex);
         }
     }
 
-    private void buildDestinationPath(String destination) throws S3ServiceException {
-        S3Object object = new S3Object(this.basedir + destination + "/");
-        object.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
-        object.setContentLength(0);
-        this.service.putObject(this.bucket, object);
-        int index = destination.lastIndexOf('/');
-        if (index != -1) {
-            buildDestinationPath(destination.substring(0, index));
-        }
+    private PutObjectRequest createDirectoryPutObjectRequest(String key) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
+
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(0);
+
+        return new PutObjectRequest(this.bucketName, key, inputStream, objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead);
     }
 
-    private String getDestinationPath(String destination) {
-        return destination.substring(0, destination.lastIndexOf('/'));
-    }
-
-    private String getBaseDir(Repository source) {
-        StringBuilder sb = new StringBuilder(source.getBasedir());
-        sb.deleteCharAt(0);
-        if (sb.charAt(sb.length() - 1) != '/') {
-            sb.append('/');
-        }
-        return sb.toString();
-    }
-
-    private AWSCredentials getCredentials(AuthenticationInfo authenticationInfo) throws AuthenticationException {
-        if (authenticationInfo == null) {
-            return null;
-        }
-        String accessKey = authenticationInfo.getUserName();
-        String secretKey = authenticationInfo.getPassphrase();
-        if (accessKey == null || secretKey == null) {
-            throw new AuthenticationException("S3 requires a username and passphrase to be set");
-        }
-        return new AWSCredentials(accessKey, secretKey);
-    }
 }

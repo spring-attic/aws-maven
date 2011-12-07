@@ -1,11 +1,11 @@
 /*
- * Copyright 2010 SpringSource
+ * Copyright 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,132 +16,83 @@
 
 package org.springframework.build.aws.maven;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.events.TransferEvent;
 import org.apache.maven.wagon.events.TransferListener;
 import org.apache.maven.wagon.resource.Resource;
 
-/**
- * Support for sending messages to Maven transfer listeners. Automates the collection of listeners and the iteration
- * over that collection when an event is fired.
- * 
- * @author Ben Hale
- */
-final class TransferListenerSupport {
-
-    private final Wagon wagon;
-
-    private final Set<TransferListener> listeners = new HashSet<TransferListener>();
+interface TransferListenerSupport {
 
     /**
-     * Creates a new instance
+     * Add a {@link TransferListener} to be notified
      * 
-     * @param wagon The wagon that events will come from
+     * @param transferListener The {@link TransferListener} to be notified
      */
-    TransferListenerSupport(Wagon wagon) {
-        this.wagon = wagon;
-    }
+    void addTransferListener(TransferListener transferListener);
 
     /**
-     * Adds a listener to the collection
+     * Remove a {@link TransferListener} so that it is no longer notified
      * 
-     * @param listener The listener to add
+     * @param transferListener The {@link TransferListener} that should no longer be notified
      */
-    void addListener(TransferListener listener) {
-        this.listeners.add(listener);
-    }
+    void removeTransferListener(TransferListener transferListener);
 
     /**
-     * Removes a listener from the collection
+     * Returns whether a {@link TransferListener} is already in the collection of {@link TransferListener}s to be
+     * notified
      * 
-     * @param listener The listener to remove
+     * @param transferListener the {@link TransferListener} to look for
+     * @return {@code true} if the {@link TransferListener} is already in the collection of {@link TransferListener}s to
+     *         be notified, otherwise {@code false}
      */
-    void removeListener(TransferListener listener) {
-        this.listeners.remove(listener);
-    }
+    boolean hasTransferListener(TransferListener transferListener);
 
     /**
-     * Whether the collection already contains a listener
-     * 
-     * @param listener The listener to check for
-     * @return whether the collection contains the listener
-     */
-    boolean hasListener(TransferListener listener) {
-        return this.listeners.contains(listener);
-    }
-
-    /**
-     * Sends a transfer initated event to all listeners
+     * Notify {@link TransferListener}s that a transfer is being initiated
      * 
      * @param resource The resource being transfered
-     * @param requestType GET or PUT request
-     * @see TransferEvent#TRANSFER_INITIATED
+     * @param requestType The type of request to be executed
+     * 
+     * @see org.apache.maven.wagon.events.TransferEvent#TRANSFER_INITIATED
      */
-    void fireTransferInitiated(Resource resource, int requestType) {
-        TransferEvent event = new TransferEvent(this.wagon, resource, TransferEvent.TRANSFER_INITIATED, requestType);
-        for (TransferListener listener : this.listeners) {
-            listener.transferInitiated(event);
-        }
-    }
+    void fireTransferInitiated(Resource resource, int requestType);
 
     /**
-     * Sends a transfer started event to all listeners
+     * Notify {@link TransferListener}s that a transfer has started successfully
      * 
      * @param resource The resource being transfered
-     * @param requestType GET or PUT request
-     * @see TransferEvent#TRANSFER_STARTED
+     * @param requestType The type of request being executed
+     * 
+     * @see org.apache.maven.wagon.events.TransferEvent#TRANSFER_STARTED
      */
-    void fireTransferStarted(Resource resource, int requestType) {
-        TransferEvent event = new TransferEvent(this.wagon, resource, TransferEvent.TRANSFER_STARTED, requestType);
-        for (TransferListener listener : this.listeners) {
-            listener.transferStarted(event);
-        }
-    }
+    void fireTransferStarted(Resource resource, int requestType);
 
     /**
-     * Sends a transfer progress event to all listeners
+     * Notify {@link TransferListener}s about the progress of a transfer
      * 
      * @param resource The resource being transfered
-     * @param requestType GET or PUT request
-     * @param buffer The buffer that was sent
-     * @param length The length of the data that was sent
-     * @see TransferEvent#TRANSFER_PROGRESS
+     * @param requestType The type of request being executed
+     * @param buffer The buffer of bytes being transfered
+     * @param length The length of the data in the buffer
+     * 
+     * @see org.apache.maven.wagon.events.TransferEvent#TRANSFER_PROGRESS
      */
-    void fireTransferProgress(Resource resource, int requestType, byte[] buffer, int length) {
-        TransferEvent event = new TransferEvent(this.wagon, resource, TransferEvent.TRANSFER_PROGRESS, requestType);
-        for (TransferListener listener : this.listeners) {
-            listener.transferProgress(event, buffer, length);
-        }
-    }
+    void fireTransferProgress(Resource resource, int requestType, byte[] buffer, int length);
 
     /**
-     * Sends a transfer completed event to all listeners
+     * Notify {@link TransferListener}s that the transfer was completed successfully
      * 
      * @param resource The resource being transfered
-     * @param requestType GET or PUT request
-     * @see TransferEvent#TRANSFER_COMPLETED
+     * @param requestType The type of request executed
+     * 
+     * @see org.apache.maven.wagon.events.TransferEvent#TRANSFER_COMPLETED
      */
-    void fireTransferCompleted(Resource resource, int requestType) {
-        TransferEvent event = new TransferEvent(this.wagon, resource, TransferEvent.TRANSFER_COMPLETED, requestType);
-        for (TransferListener listener : this.listeners) {
-            listener.transferCompleted(event);
-        }
-    }
+    void fireTransferCompleted(Resource resource, int requestType);
 
     /**
-     * Sends a transfer error event to all listeners
+     * Notify {@link TransferListener}s that an error occurred during the transfer
      * 
      * @param resource The resource being transfered
-     * @param requestType GET or PUT request
-     * @param e The transfer error
+     * @param requestType The type of the request being executed
+     * @param exception The error that occurred
      */
-    void fireTransferError(Resource resource, int requestType, Exception e) {
-        TransferEvent event = new TransferEvent(this.wagon, resource, e, requestType);
-        for (TransferListener listener : this.listeners) {
-            listener.transferError(event);
-        }
-    }
+    void fireTransferError(Resource resource, int requestType, Exception exception);
 }

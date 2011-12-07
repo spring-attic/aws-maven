@@ -16,13 +16,26 @@
 
 package org.springframework.build.aws.maven;
 
-interface TransferProgress {
+import java.util.Arrays;
 
-    /**
-     * Notify that transfer progress has occurred
-     * 
-     * @param buffer The bytes transfered
-     * @param length The length of the bytes transfered
-     */
-    void notify(byte[] buffer, int length);
+final class StubTransferProgress implements TransferProgress {
+
+    private volatile byte[] buffer;
+
+    private volatile int length;
+
+    @Override
+    public void notify(byte[] buffer, int length) {
+        this.buffer = Arrays.copyOf(buffer, buffer.length);
+        this.length = length;
+    }
+
+    byte[] getBuffer() {
+        return this.buffer;
+    }
+
+    int getLength() {
+        return this.length;
+    }
+
 }

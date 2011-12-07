@@ -16,13 +16,25 @@
 
 package org.springframework.build.aws.maven;
 
-interface TransferProgress {
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
 
-    /**
-     * Notify that transfer progress has occurred
-     * 
-     * @param buffer The bytes transfered
-     * @param length The length of the bytes transfered
-     */
-    void notify(byte[] buffer, int length);
+import com.amazonaws.auth.AWSCredentials;
+
+final class AuthenticationInfoAWSCredentials implements AWSCredentials {
+
+    private final AuthenticationInfo authenticationInfo;
+
+    AuthenticationInfoAWSCredentials(AuthenticationInfo authenticationInfo) {
+        this.authenticationInfo = authenticationInfo;
+    }
+
+    @Override
+    public String getAWSAccessKeyId() {
+        return this.authenticationInfo.getUserName();
+    }
+
+    @Override
+    public String getAWSSecretKey() {
+        return this.authenticationInfo.getPassphrase();
+    }
 }
