@@ -68,6 +68,9 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
 
     private volatile String baseDirectory;
 
+    /**
+     * Creates a new instance of the wagon
+     */
     public SimpleStorageServiceWagon() {
         super(true);
     }
