@@ -5,8 +5,8 @@
 			<pattern>%-5level %msg%n</pattern>
 		</encoder>
 	</appender>
-	
-	<root level="info">
+
+	<root level="warn">
 		<appender-ref ref="CONSOLE" />
 	</root>
 

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
@@ -113,17 +114,17 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     }
 
     @Override
-    protected boolean isRemoteResourceNewer(String resourceName, long timestamp) throws TransferFailedException {
+    protected boolean isRemoteResourceNewer(String resourceName, long timestamp) throws ResourceDoesNotExistException {
         try {
             Date lastModified = getObjectMetadata(resourceName).getLastModified();
             return lastModified == null ? true : lastModified.getTime() > timestamp;
         } catch (AmazonServiceException e) {
-            throw new TransferFailedException(String.format("'%s' does not exist", resourceName), e);
+            throw new ResourceDoesNotExistException(String.format("'%s' does not exist", resourceName), e);
         }
     }
 
     @Override
-    protected List<String> listDirectory(String directory) throws TransferFailedException {
+    protected List<String> listDirectory(String directory) throws ResourceDoesNotExistException {
         List<String> directoryContents = new ArrayList<String>();
 
         try {
@@ -147,12 +148,13 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
 
             return directoryContents;
         } catch (AmazonServiceException e) {
-            throw new TransferFailedException(String.format("'%s' does not exist", directory), e);
+            throw new ResourceDoesNotExistException(String.format("'%s' does not exist", directory), e);
         }
     }
 
     @Override
-    protected void getResource(String resourceName, File destination, TransferProgress transferProgress) throws TransferFailedException {
+    protected void getResource(String resourceName, File destination, TransferProgress transferProgress) throws TransferFailedException,
+        ResourceDoesNotExistException {
         InputStream in = null;
         OutputStream out = null;
         try {
@@ -163,7 +165,7 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
 
             IoUtils.copy(in, out);
         } catch (AmazonServiceException e) {
-            throw new TransferFailedException(String.format("'%s' does not exist", resourceName), e);
+            throw new ResourceDoesNotExistException(String.format("'%s' does not exist", resourceName), e);
         } catch (FileNotFoundException e) {
             throw new TransferFailedException(String.format("Cannot write file to '%s'", destination), e);
         } catch (IOException e) {
