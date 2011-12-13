@@ -49,6 +49,7 @@ import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
@@ -200,7 +201,7 @@ public final class SimpleStorageServiceWagonIntegrationTests {
     }
 
     @Test
-    public void putResource() throws TransferFailedException {
+    public void putResource() throws TransferFailedException, ResourceDoesNotExistException {
         File file = new File("src/test/resources/test.txt");
         this.wagon.putResource(file, FILE_NAME, this.transferProgress);
 
@@ -221,23 +222,27 @@ public final class SimpleStorageServiceWagonIntegrationTests {
         PutObjectRequest fileRequest = putObjectRequests.get(2);
         assertEquals(BUCKET_NAME, fileRequest.getBucketName());
         assertEquals(BASE_DIRECTORY + FILE_NAME, fileRequest.getKey());
-        assertEquals(file, fileRequest.getFile());
+        assertNotNull(fileRequest.getInputStream());
         assertEquals(CannedAccessControlList.PublicRead, fileRequest.getCannedAcl());
+
+        ObjectMetadata objectMetadata = fileRequest.getMetadata();
+        assertNotNull(objectMetadata);
+        assertEquals(file.length(), objectMetadata.getContentLength());
+        assertEquals("text/plain", objectMetadata.getContentType());
     }
 
     @Test(expected = TransferFailedException.class)
-    public void putResourceMkdirException() throws TransferFailedException {
+    public void putResourceMkdirException() throws TransferFailedException, ResourceDoesNotExistException {
         when(this.amazonS3.putObject(any(PutObjectRequest.class))).thenThrow(new AmazonServiceException(""));
         File file = new File("src/test/resources/test.txt");
         this.wagon.putResource(file, FILE_NAME, this.transferProgress);
     }
 
     @Test(expected = TransferFailedException.class)
-    public void putResourcePutException() throws TransferFailedException {
+    public void putResourcePutException() throws TransferFailedException, ResourceDoesNotExistException {
+        when(this.amazonS3.putObject(any(PutObjectRequest.class))).thenReturn((PutObjectResult) null, (PutObjectResult) null).thenThrow(
+            new AmazonServiceException(""));
         File file = new File("src/test/resources/test.txt");
-        PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET_NAME, BASE_DIRECTORY + FILE_NAME, file).withCannedAcl(CannedAccessControlList.PublicRead);
-        when(this.amazonS3.putObject(eq(putObjectRequest))).thenThrow(new AmazonServiceException(""));
-
         this.wagon.putResource(file, FILE_NAME, this.transferProgress);
     }
 }
