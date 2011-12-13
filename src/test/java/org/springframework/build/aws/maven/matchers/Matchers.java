@@ -20,7 +20,6 @@ import org.apache.maven.wagon.events.SessionEvent;
 import org.apache.maven.wagon.events.TransferEvent;
 
 import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 
 public final class Matchers {
 
@@ -31,10 +30,6 @@ public final class Matchers {
         return org.mockito.Matchers.argThat(new ListObjectsRequestMatcher(listObjectsRequest));
     }
 
-    public static PutObjectRequest eq(PutObjectRequest putObjectRequest) {
-        return org.mockito.Matchers.argThat(new PutObjectRequestMatcher(putObjectRequest));
-    }
-
     public static SessionEvent eq(SessionEvent sessionEvent) {
         return org.mockito.Matchers.argThat(new SessionEventMatcher(sessionEvent));
     }
@@ -42,4 +37,5 @@ public final class Matchers {
     public static TransferEvent eq(TransferEvent transferEvent) {
         return org.mockito.Matchers.argThat(new TransferEventMatcher(transferEvent));
     }
+
 }
