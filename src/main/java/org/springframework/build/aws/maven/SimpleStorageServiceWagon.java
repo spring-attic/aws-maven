@@ -40,6 +40,7 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
@@ -176,15 +177,27 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     }
 
     @Override
-    protected void putResource(File source, String destination, TransferProgress transferProgress) throws TransferFailedException {
+    protected void putResource(File source, String destination, TransferProgress transferProgress) throws TransferFailedException,
+        ResourceDoesNotExistException {
         String key = getKey(destination);
 
         mkdirs(key, 0);
 
+        InputStream in = null;
         try {
-            this.amazonS3.putObject(new PutObjectRequest(this.bucketName, key, source).withCannedAcl(CannedAccessControlList.PublicRead));
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(source.length());
+            objectMetadata.setContentType(Mimetypes.getInstance().getMimetype(source));
+
+            in = new TransferProgressFileInputStream(source, transferProgress);
+
+            this.amazonS3.putObject(new PutObjectRequest(this.bucketName, key, in, objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (AmazonServiceException e) {
             throw new TransferFailedException(String.format("Cannot write file to '%s'", destination), e);
+        } catch (FileNotFoundException e) {
+            throw new ResourceDoesNotExistException(String.format("Cannot read file from '%s'", source), e);
+        } finally {
+            IoUtils.closeQuietly(in);
         }
     }
 
