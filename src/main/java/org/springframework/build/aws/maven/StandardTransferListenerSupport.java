@@ -36,7 +36,9 @@ final class StandardTransferListenerSupport implements TransferListenerSupport {
 
     @Override
     public void addTransferListener(TransferListener transferListener) {
-        this.transferListeners.add(transferListener);
+        if (transferListener != null) {
+            this.transferListeners.add(transferListener);
+        }
     }
 
     @Override
