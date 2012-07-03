@@ -45,7 +45,7 @@ final class S3Utils {
         ClientConfiguration clientConfiguration = new ClientConfiguration();
 
         if (proxyInfoProvider != null) {
-            ProxyInfo proxyInfo = proxyInfoProvider.getProxyInfo("http");
+            ProxyInfo proxyInfo = proxyInfoProvider.getProxyInfo("s3");
             if (proxyInfo != null) {
                 clientConfiguration.withProxyHost(proxyInfo.getHost()).withProxyPort(proxyInfo.getPort());
             }
