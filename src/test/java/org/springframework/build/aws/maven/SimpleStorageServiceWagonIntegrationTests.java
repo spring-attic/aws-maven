@@ -51,6 +51,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 public final class SimpleStorageServiceWagonIntegrationTests {
@@ -181,7 +182,7 @@ public final class SimpleStorageServiceWagonIntegrationTests {
     @Test
     public void getResource() throws TransferFailedException, FileNotFoundException, ResourceDoesNotExistException {
         when(this.amazonS3.getObject(SimpleStorageServiceWagonIntegrationTests.BUCKET_NAME, BASE_DIRECTORY + FILE_NAME)).thenReturn(this.s3Object);
-        when(this.s3Object.getObjectContent()).thenReturn(new FileInputStream("src/test/resources/test.txt"));
+        when(this.s3Object.getObjectContent()).thenReturn(new S3ObjectInputStream(new FileInputStream("src/test/resources/test.txt"), null));
 
         File target = new File("target/robots.txt");
         target.delete();
