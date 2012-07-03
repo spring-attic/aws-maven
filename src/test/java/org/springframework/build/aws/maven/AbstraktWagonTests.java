@@ -37,6 +37,7 @@ import java.util.List;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
+import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.authorization.AuthorizationException;
@@ -498,7 +499,15 @@ public final class AbstraktWagonTests {
     }
 
     @Test
+    public void readTimeOut() {
+        assertEquals(Wagon.DEFAULT_READ_TIMEOUT, this.wagon.getReadTimeout());
+        this.wagon.setReadTimeout(Integer.MAX_VALUE);
+        assertEquals(Integer.MAX_VALUE, this.wagon.getReadTimeout());
+    }
+
+    @Test
     public void timeOut() {
+        assertEquals(Wagon.DEFAULT_CONNECTION_TIMEOUT, this.wagon.getTimeout());
         this.wagon.setTimeout(Integer.MAX_VALUE);
         assertEquals(Integer.MAX_VALUE, this.wagon.getTimeout());
     }

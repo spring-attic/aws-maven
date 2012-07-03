@@ -36,17 +36,19 @@ import org.apache.maven.wagon.resource.Resource;
 
 abstract class AbstractWagon implements Wagon {
 
-    private transient boolean interactive = false;
+    private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 
-    private transient Repository repository = null;
+    private boolean interactive = false;
+
+    private int readTimeout = DEFAULT_READ_TIMEOUT;
+
+    private Repository repository = null;
 
     private final boolean supportsDirectoryCopy;
 
     private final SessionListenerSupport sessionListenerSupport;
 
     private final TransferListenerSupport transferListenerSupport;
-
-    private int timeout;
 
     protected AbstractWagon(boolean supportsDirectoryCopy) {
         this.supportsDirectoryCopy = supportsDirectoryCopy;
@@ -278,13 +280,23 @@ abstract class AbstractWagon implements Wagon {
     }
 
     @Override
+    public final int getReadTimeout() {
+        return this.readTimeout;
+    }
+
+    @Override
+    public final void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    @Override
     public final int getTimeout() {
-        return this.timeout;
+        return this.connectionTimeout;
     }
 
     @Override
     public final void setTimeout(int timeout) {
-        this.timeout = timeout;
+        this.connectionTimeout = timeout;
     }
 
     protected abstract void connectToRepository(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
