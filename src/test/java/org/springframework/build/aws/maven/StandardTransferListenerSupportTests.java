@@ -54,6 +54,7 @@ public final class StandardTransferListenerSupportTests {
         assertTrue(this.transferListenerSupport.hasTransferListener(this.transferListener));
         this.transferListenerSupport.removeTransferListener(this.transferListener);
         assertFalse(this.transferListenerSupport.hasTransferListener(this.transferListener));
+        this.transferListenerSupport.addTransferListener(null);
     }
 
     @Test

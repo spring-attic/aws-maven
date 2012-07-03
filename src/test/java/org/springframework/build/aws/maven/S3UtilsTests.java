@@ -53,7 +53,7 @@ public final class S3UtilsTests {
 
     @Test
     public void getClientConfiguration() {
-        when(this.proxyInfoProvider.getProxyInfo("http")).thenReturn(this.proxyInfo);
+        when(this.proxyInfoProvider.getProxyInfo("s3")).thenReturn(this.proxyInfo);
         when(this.proxyInfo.getHost()).thenReturn("foo");
         when(this.proxyInfo.getPort()).thenReturn(PORT);
 
