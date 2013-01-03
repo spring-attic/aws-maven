@@ -233,7 +233,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<url>http://www.springframework.org</url>
+	<url>https://github.com/SpringSource/aws-maven</url>
 
 	<inceptionYear>2007</inceptionYear>
 
@@ -247,7 +247,6 @@
 
 	<scm>
 		<connection>scm:git:https://github.com/SpringSource/aws-maven.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:spring-build/aws-maven.git</developerConnection>
 		<url>https://github.com/SpringSource/aws-maven</url>
 	</scm>
 
@@ -260,5 +259,18 @@
 		<system>Bamboo</system>
 		<url>https://build.springsource.org/browse/BUILD-AWSMAVEN</url>
 	</ciManagement>
+
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/SpringSource/aws-maven/issues</url>
+	</issueManagement>
+
+	<developers>
+		<developer>
+			<id>nebhale</id>
+			<name>Ben Hale</name>
+			<email>bhale@vmware.com</email>
+		</developer>
+	</developers>
 
 </project>
