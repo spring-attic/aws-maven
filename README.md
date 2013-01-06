@@ -13,9 +13,9 @@ To publish Maven artifacts to S3 a build extension must be defined in a project'
 	        <extensions>
 	            ...
 	            <extension>
-	                <groupId>org.springframework.build.aws</groupId>
-	                <artifactId>org.springframework.build.aws.maven</artifactId>
-	                <version>4.0.0.RELEASE</version>
+	                <groupId>org.springframework.build</groupId>
+	                <artifactId>aws-maven</artifactId>
+	                <version>4.4.0.RELEASE</version>
 	            </extension>
 	            ...
 	        </extensions>
