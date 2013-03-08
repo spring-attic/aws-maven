@@ -36,9 +36,9 @@ import java.util.List;
 
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
-import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.WagonException;
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.repository.Repository;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -76,13 +76,30 @@ public final class SimpleStorageServiceWagonIntegrationTests {
 
     private final SimpleStorageServiceWagon wagon = new SimpleStorageServiceWagon(this.amazonS3, BUCKET_NAME, BASE_DIRECTORY);
 
-    @Before
-    public void connect() throws AuthenticationException {
-        Repository repository = new Repository("test", "s3://maven.springframework.org/");
+    @Test
+    public void regionConnections() throws WagonException {
         SimpleStorageServiceWagon remoteConnectingWagon = new SimpleStorageServiceWagon();
 
-        remoteConnectingWagon.connectToRepository(repository, null, null);
-        remoteConnectingWagon.disconnectFromRepository();
+        AuthenticationInfo authenticationInfo = new AuthenticationInfo();
+        authenticationInfo.setUserName(System.getProperty("access.key"));
+        authenticationInfo.setPassphrase(System.getProperty("secret.key"));
+
+        String[] buckets = new String[] { //
+        "test.aws-maven.ireland", //
+            "test.aws-maven.northern-california", //
+            "test.aws-maven.oregon", //
+            "test.aws-maven.sao-paulo", //
+            "test.aws-maven.singapore", //
+            "test.aws-maven.sydney", //
+            "test.aws-maven.tokyo", //
+            "test.aws-maven.us" };
+
+        for (String bucket : buckets) {
+            Repository repository = new Repository("test", String.format("s3://%s/", bucket));
+            remoteConnectingWagon.connectToRepository(repository, authenticationInfo, null);
+            assertNotNull(remoteConnectingWagon.getFileList(""));
+            remoteConnectingWagon.disconnectFromRepository();
+        }
     }
 
     @Test

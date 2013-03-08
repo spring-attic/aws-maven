@@ -91,9 +91,12 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
             AWSCredentials awsCredentials = authenticationInfo == null ? null : new AuthenticationInfoAWSCredentials(authenticationInfo);
             ClientConfiguration clientConfiguration = S3Utils.getClientConfiguration(proxyInfoProvider);
 
-            this.amazonS3 = new AmazonS3Client(awsCredentials, clientConfiguration);
             this.bucketName = S3Utils.getBucketName(repository);
             this.baseDirectory = S3Utils.getBaseDirectory(repository);
+
+            this.amazonS3 = new AmazonS3Client(awsCredentials, clientConfiguration);
+            Region region = Region.fromLocationConstraint(this.amazonS3.getBucketLocation(this.bucketName));
+            this.amazonS3.setEndpoint(region.getEndpoint());
         }
     }
 
