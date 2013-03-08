@@ -39,9 +39,13 @@ enum Region {
         return this.endpoint;
     }
 
+    String getLocationConstraint() {
+        return this.locationConstraint;
+    }
+
     static Region fromLocationConstraint(String locationConstraint) {
         for (Region region : values()) {
-            if (region.locationConstraint.equals(locationConstraint)) {
+            if (region.getLocationConstraint().equals(locationConstraint)) {
                 return region;
             }
         }
