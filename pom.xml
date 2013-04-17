@@ -6,7 +6,7 @@
 	<groupId>org.springframework.build</groupId>
 	<artifactId>aws-maven</artifactId>
 	<packaging>jar</packaging>
-	<version>4.6.0.BUILD-SNAPSHOT</version>
+	<version>4.7.0.BUILD-SNAPSHOT</version>
 	<name>Amazon Web Services S3 Maven Wagon Support</name>
 	<description>Standard Maven wagon support for s3:// urls</description>
 
