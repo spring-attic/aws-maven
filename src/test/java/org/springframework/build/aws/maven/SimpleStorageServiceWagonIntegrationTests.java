@@ -86,13 +86,15 @@ public final class SimpleStorageServiceWagonIntegrationTests {
 
         String[] buckets = new String[] { //
         "test.aws-maven.ireland", //
+            "test.aws-maven.eu", //
             "test.aws-maven.northern-california", //
             "test.aws-maven.oregon", //
             "test.aws-maven.sao-paulo", //
             "test.aws-maven.singapore", //
             "test.aws-maven.sydney", //
             "test.aws-maven.tokyo", //
-            "test.aws-maven.us" };
+            "test.aws-maven.us" //
+        };
 
         for (String bucket : buckets) {
             Repository repository = new Repository("test", String.format("s3://%s/", bucket));
