@@ -1,10 +1,10 @@
-AWS Maven is a [Maven Wagon][1] for [Amazon S3][2].
+AWS Maven is a [Maven Wagon][wagon] for [Amazon S3][s3].
 
-[1]: http://maven.apache.org/wagon/
-[2]: http://aws.amazon.com/s3/
+[wagon]: http://maven.apache.org/wagon/
+[s3]: http://aws.amazon.com/s3/
 
 # Usage
-To publish Maven artifacts to S3 a build extension must be defined in a project's `pom.xml`.
+To publish Maven artifacts to S3 a build extension must be defined in a project's `pom.xml`.  The latest version of the wagon can be found on the [`aws-maven`][aws-maven] page in Maven Central.
 
 	<project>
 	    ...
@@ -63,3 +63,5 @@ Finally the `~/.m2/settings.xml` must be updated to include access and secret ke
 	    </servers>
 	    ...
 	</settings>
+
+[aws-maven]: http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.springframework.build%22%20AND%20a%3A%22aws-maven%22
