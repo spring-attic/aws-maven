@@ -22,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +36,9 @@ import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.proxy.ProxyInfoProvider;
 import org.apache.maven.wagon.repository.Repository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
@@ -69,6 +74,8 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     private volatile String bucketName;
 
     private volatile String baseDirectory;
+
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleStorageServiceWagon.class);
 
     /**
      * Creates a new instance of the wagon
@@ -182,9 +189,23 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     @Override
     protected void putResource(File source, String destination, TransferProgress transferProgress) throws TransferFailedException,
         ResourceDoesNotExistException {
+        try {
+            URI destinationUri = new URI(destination).normalize();
+            destination = destinationUri.toString();
+        } catch (URISyntaxException e) {
+            throw new TransferFailedException("Invalid destination: " + destination, e);
+        }
+
         String key = getKey(destination);
+        LOG.debug("key=".concat(key).concat("; src=".concat(source.toString()))
+                .concat("; dest=").concat(destination.toString()));
 
         mkdirs(key, 0);
+
+        if (source.isDirectory()) {
+            LOG.debug(String.format("Skiping directory: '%s'", source));
+            return;
+        }
 
         InputStream in = null;
         try {
