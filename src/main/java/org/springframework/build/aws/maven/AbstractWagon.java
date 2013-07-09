@@ -257,7 +257,11 @@ abstract class AbstractWagon implements Wagon {
     public final void putDirectory(File sourceDirectory, String destinationDirectory) throws TransferFailedException, ResourceDoesNotExistException,
         AuthorizationException {
         for (File f : sourceDirectory.listFiles()) {
-            put(f, destinationDirectory + "/" + f.getName());
+            if (f.isDirectory()) {
+                putDirectory(f, destinationDirectory + "/" + f.getName());
+            } else {
+                put(f, destinationDirectory + "/" + f.getName());
+            }
         }
     }
 
