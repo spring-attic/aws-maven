@@ -202,11 +202,6 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
 
         mkdirs(key, 0);
 
-        if (source.isDirectory()) {
-            LOG.debug(String.format("Skiping directory: '%s'", source));
-            return;
-        }
-
         InputStream in = null;
         try {
             ObjectMetadata objectMetadata = new ObjectMetadata();
