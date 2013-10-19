@@ -50,7 +50,7 @@ import org.apache.maven.wagon.repository.Repository;
 import org.apache.maven.wagon.resource.Resource;
 import org.junit.Test;
 
-public final class AbstraktWagonTests {
+public final class AbstractWagonTests {
 
     private final SessionListenerSupport sessionListenerSupport = mock(SessionListenerSupport.class);
 

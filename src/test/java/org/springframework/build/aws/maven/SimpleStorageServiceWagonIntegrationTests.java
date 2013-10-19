@@ -76,27 +76,41 @@ public final class SimpleStorageServiceWagonIntegrationTests {
 
     private final SimpleStorageServiceWagon wagon = new SimpleStorageServiceWagon(this.amazonS3, BUCKET_NAME, BASE_DIRECTORY);
 
+
     @Test
     public void regionConnections() throws WagonException {
         SimpleStorageServiceWagon remoteConnectingWagon = new SimpleStorageServiceWagon();
 
         AuthenticationInfo authenticationInfo = new AuthenticationInfo();
         authenticationInfo.setUserName(System.getProperty("access.key"));
-        authenticationInfo.setPassphrase(System.getProperty("secret.key"));
+        authenticationInfo.setPassword(System.getProperty("secret.key"));
 
-        String[] buckets = new String[] { //
-        "test.aws-maven.ireland", //
-            "test.aws-maven.eu", //
-            "test.aws-maven.northern-california", //
-            "test.aws-maven.oregon", //
-            "test.aws-maven.sao-paulo", //
-            "test.aws-maven.singapore", //
-            "test.aws-maven.sydney", //
-            "test.aws-maven.tokyo", //
-            "test.aws-maven.us" //
-        };
+        assertNotNull(authenticationInfo.getUserName());
+        assertNotNull(authenticationInfo.getPassword());
+
+        String bucketsSysProp = System.getProperty("buckets");
+        String[] buckets;
+        if (bucketsSysProp != null && !bucketsSysProp.trim().isEmpty()) {
+            buckets = bucketsSysProp.split(",");
+            for (int i=0; i < buckets.length; i++) {
+                buckets[i] = buckets[i].trim();
+            }
+        } else {
+            buckets = new String[] { //
+                "test.aws-maven.ireland", //
+                "test.aws-maven.eu", //
+                "test.aws-maven.northern-california", //
+                "test.aws-maven.oregon", //
+                "test.aws-maven.sao-paulo", //
+                "test.aws-maven.singapore", //
+                "test.aws-maven.sydney", //
+                "test.aws-maven.tokyo", //
+                "test.aws-maven.us" //
+            };
+        }
 
         for (String bucket : buckets) {
+
             Repository repository = new Repository("test", String.format("s3://%s/", bucket));
             remoteConnectingWagon.connectToRepository(repository, authenticationInfo, null);
             assertNotNull(remoteConnectingWagon.getFileList(""));
