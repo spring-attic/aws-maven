@@ -43,7 +43,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
 
-public final class AbstraktWagonTest {
+public final class AbstractWagonTest {
 
     private final SessionListenerSupport sessionListenerSupport = mock(SessionListenerSupport.class);
 

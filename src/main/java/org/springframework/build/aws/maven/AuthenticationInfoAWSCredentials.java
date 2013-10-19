@@ -34,6 +34,6 @@ final class AuthenticationInfoAWSCredentials implements AWSCredentials {
 
     @Override
     public String getAWSSecretKey() {
-        return this.authenticationInfo.getPassphrase();
+        return this.authenticationInfo.getPassword();
     }
 }
