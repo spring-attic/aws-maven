@@ -15,7 +15,7 @@ To publish Maven artifacts to S3 a build extension must be defined in a project'
 	            <extension>
 	                <groupId>org.springframework.build</groupId>
 	                <artifactId>aws-maven</artifactId>
-	                <version>4.4.0.RELEASE</version>
+	                <version>5.0.0.RELEASE</version>
 	            </extension>
 	            ...
 	        </extensions>
@@ -52,12 +52,12 @@ Finally the `~/.m2/settings.xml` must be updated to include access and secret ke
 	        <server>
 	            <id>aws-release</id>
 	            <username>0123456789ABCDEFGHIJ</username>
-	            <passphrase>0123456789abcdefghijklmnopqrstuvwxyzABCD</passphrase>
+	            <password>0123456789abcdefghijklmnopqrstuvwxyzABCD</password>
 	        </server>
 	        <server>
 	            <id>aws-snapshot</id>
 	            <username>0123456789ABCDEFGHIJ</username>
-	            <passphrase>0123456789abcdefghijklmnopqrstuvwxyzABCD</passphrase>
+	            <password>0123456789abcdefghijklmnopqrstuvwxyzABCD</password>
 	        </server>
 	        ...
 	    </servers>

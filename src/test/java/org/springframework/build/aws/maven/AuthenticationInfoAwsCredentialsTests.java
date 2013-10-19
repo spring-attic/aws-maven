@@ -37,7 +37,7 @@ public final class AuthenticationInfoAwsCredentialsTests {
 
     @Test
     public void getAWSSecretKey() {
-        when(this.authenticationInfo.getPassphrase()).thenReturn("foo");
+        when(this.authenticationInfo.getPassword()).thenReturn("foo");
         assertEquals("foo", this.awsCredentials.getAWSSecretKey());
     }
 
