@@ -13,12 +13,12 @@
 	<description>Standard Maven wagon support for s3:// urls</description>
 
 	<properties>
-		<amazonaws.version>1.4.3</amazonaws.version>
+		<amazonaws.version>1.6.0</amazonaws.version>
 		<junit.version>4.11</junit.version>
 		<logback.version>1.0.12</logback.version>
 		<mockito.version>1.9.5</mockito.version>
 		<slf4j.version>1.7.5</slf4j.version>
-		<wagon.version>2.4</wagon.version>
+		<wagon.version>2.5</wagon.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
