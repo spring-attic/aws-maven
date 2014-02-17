@@ -146,10 +146,7 @@ abstract class AbstractWagon implements Wagon {
             connectToRepository(source, authenticationInfo, proxyInfoProvider);
             this.sessionListenerSupport.fireSessionLoggedIn();
             this.sessionListenerSupport.fireSessionOpened();
-        } catch (ConnectionException e) {
-            this.sessionListenerSupport.fireSessionConnectionRefused();
-            throw e;
-        } catch (AuthenticationException e) {
+        } catch (ConnectionException | AuthenticationException e) {
             this.sessionListenerSupport.fireSessionConnectionRefused();
             throw e;
         }
@@ -179,13 +176,7 @@ abstract class AbstractWagon implements Wagon {
             getResource(resourceName, destination, new StandardTransferProgress(resource, TransferEvent.REQUEST_GET,
                     this.transferListenerSupport));
             this.transferListenerSupport.fireTransferCompleted(resource, TransferEvent.REQUEST_GET);
-        } catch (TransferFailedException e) {
-            this.transferListenerSupport.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
-            throw e;
-        } catch (ResourceDoesNotExistException e) {
-            this.transferListenerSupport.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
-            throw e;
-        } catch (AuthorizationException e) {
+        } catch (TransferFailedException | ResourceDoesNotExistException | AuthorizationException e) {
             this.transferListenerSupport.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
             throw e;
         }
@@ -196,15 +187,7 @@ abstract class AbstractWagon implements Wagon {
             ResourceDoesNotExistException, AuthorizationException {
         try {
             return listDirectory(destinationDirectory);
-        } catch (TransferFailedException e) {
-            this.transferListenerSupport.fireTransferError(new Resource(destinationDirectory),
-                    TransferEvent.REQUEST_GET, e);
-            throw e;
-        } catch (ResourceDoesNotExistException e) {
-            this.transferListenerSupport.fireTransferError(new Resource(destinationDirectory),
-                    TransferEvent.REQUEST_GET, e);
-            throw e;
-        } catch (AuthorizationException e) {
+        } catch (TransferFailedException | ResourceDoesNotExistException | AuthorizationException e) {
             this.transferListenerSupport.fireTransferError(new Resource(destinationDirectory),
                     TransferEvent.REQUEST_GET, e);
             throw e;
@@ -222,13 +205,7 @@ abstract class AbstractWagon implements Wagon {
             }
 
             return false;
-        } catch (TransferFailedException e) {
-            this.transferListenerSupport.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
-            throw e;
-        } catch (ResourceDoesNotExistException e) {
-            this.transferListenerSupport.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
-            throw e;
-        } catch (AuthorizationException e) {
+        } catch (TransferFailedException | ResourceDoesNotExistException | AuthorizationException e) {
             this.transferListenerSupport.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
             throw e;
         }
@@ -250,13 +227,7 @@ abstract class AbstractWagon implements Wagon {
             putResource(source, destination, new StandardTransferProgress(resource, TransferEvent.REQUEST_PUT,
                     this.transferListenerSupport));
             this.transferListenerSupport.fireTransferCompleted(resource, TransferEvent.REQUEST_PUT);
-        } catch (TransferFailedException e) {
-            this.transferListenerSupport.fireTransferError(resource, TransferEvent.REQUEST_PUT, e);
-            throw e;
-        } catch (ResourceDoesNotExistException e) {
-            this.transferListenerSupport.fireTransferError(resource, TransferEvent.REQUEST_PUT, e);
-            throw e;
-        } catch (AuthorizationException e) {
+        } catch (TransferFailedException | ResourceDoesNotExistException | AuthorizationException e) {
             this.transferListenerSupport.fireTransferError(resource, TransferEvent.REQUEST_PUT, e);
             throw e;
         }
@@ -277,10 +248,7 @@ abstract class AbstractWagon implements Wagon {
     public final boolean resourceExists(String resourceName) throws TransferFailedException, AuthorizationException {
         try {
             return doesRemoteResourceExist(resourceName);
-        } catch (AuthorizationException e) {
-            this.transferListenerSupport.fireTransferError(new Resource(resourceName), TransferEvent.REQUEST_GET, e);
-            throw e;
-        } catch (TransferFailedException e) {
+        } catch (AuthorizationException | TransferFailedException e) {
             this.transferListenerSupport.fireTransferError(new Resource(resourceName), TransferEvent.REQUEST_GET, e);
             throw e;
         }

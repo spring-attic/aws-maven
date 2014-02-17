@@ -164,7 +164,8 @@ public final class AbstractWagonTest {
     }
 
     @Test
-    public void connectRepositoryAuthenticationInfoProxyInfoProvider() throws ConnectionException, AuthenticationException {
+    public void connectRepositoryAuthenticationInfoProxyInfoProvider() throws ConnectionException,
+            AuthenticationException {
         this.wagon.connect(this.repository, this.authenticationInfo, this.proxyInfoProvider);
 
         assertEquals(this.repository, this.wagon.getRepository());
@@ -250,7 +251,8 @@ public final class AbstractWagonTest {
         } catch (TransferFailedException e) {
             verify(this.transferListenerSupport).fireTransferInitiated(new Resource("foo"), TransferEvent.REQUEST_GET);
             verify(this.transferListenerSupport).fireTransferStarted(new Resource("foo"), TransferEvent.REQUEST_GET);
-            verify(this.transferListenerSupport).fireTransferError(new Resource("foo"), TransferEvent.REQUEST_GET, exception);
+            verify(this.transferListenerSupport).fireTransferError(new Resource("foo"), TransferEvent.REQUEST_GET,
+                    exception);
         }
     }
 
@@ -266,7 +268,8 @@ public final class AbstractWagonTest {
         } catch (ResourceDoesNotExistException e) {
             verify(this.transferListenerSupport).fireTransferInitiated(new Resource("foo"), TransferEvent.REQUEST_GET);
             verify(this.transferListenerSupport).fireTransferStarted(new Resource("foo"), TransferEvent.REQUEST_GET);
-            verify(this.transferListenerSupport).fireTransferError(new Resource("foo"), TransferEvent.REQUEST_GET, exception);
+            verify(this.transferListenerSupport).fireTransferError(new Resource("foo"), TransferEvent.REQUEST_GET,
+                    exception);
         }
     }
 
@@ -282,7 +285,8 @@ public final class AbstractWagonTest {
         } catch (AuthorizationException e) {
             verify(this.transferListenerSupport).fireTransferInitiated(new Resource("foo"), TransferEvent.REQUEST_GET);
             verify(this.transferListenerSupport).fireTransferStarted(new Resource("foo"), TransferEvent.REQUEST_GET);
-            verify(this.transferListenerSupport).fireTransferError(new Resource("foo"), TransferEvent.REQUEST_GET, exception);
+            verify(this.transferListenerSupport).fireTransferError(new Resource("foo"), TransferEvent.REQUEST_GET,
+                    exception);
         }
     }
 
