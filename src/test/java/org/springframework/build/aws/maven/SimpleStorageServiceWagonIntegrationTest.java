@@ -244,7 +244,6 @@ public final class SimpleStorageServiceWagonIntegrationTest {
         assertEquals(BUCKET_NAME, fileRequest.getBucketName());
         assertEquals(BASE_DIRECTORY + FILE_NAME, fileRequest.getKey());
         assertNotNull(fileRequest.getInputStream());
-        assertEquals(CannedAccessControlList.PublicRead, fileRequest.getCannedAcl());
 
         ObjectMetadata objectMetadata = fileRequest.getMetadata();
         assertNotNull(objectMetadata);

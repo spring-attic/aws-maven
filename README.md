@@ -43,7 +43,7 @@ Once the build extension is configured distribution management repositories can 
 	  ...
 	</project>
 
-Finally the `~/.m2/settings.xml` must be updated to include access and secret keys for the account. The access key should be used to populate the `username` element, and the secret key should be used to populate the `passphrase` element.
+Finally the `~/.m2/settings.xml` must be updated to include access and secret keys for the account. The access key should be used to populate the `username` element, and the secret key should be used to populate the `password` element.
 
 	<settings>
 	    ...
