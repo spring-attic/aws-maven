@@ -22,11 +22,14 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-public final class TransferProgressFileInputStreamTests {
+public final class TransferProgressFileOutputStreamTest {
+
+    private static final int END_POSITION = 30;
 
     private static final int START_POSITION = 10;
 
@@ -36,51 +39,54 @@ public final class TransferProgressFileInputStreamTests {
 
     private final StubTransferProgress transferProgress = new StubTransferProgress();
 
-    private final TransferProgressFileInputStream inputStream;
+    private final TransferProgressFileOutputStream outputStream;
 
-    public TransferProgressFileInputStreamTests() throws FileNotFoundException {
-        this.inputStream = new TransferProgressFileInputStream(new File("src/test/resources/test.txt"),
-                this.transferProgress);
+    public TransferProgressFileOutputStreamTest() throws FileNotFoundException {
+        this.outputStream = new TransferProgressFileOutputStream(new File("target/test.txt"), this.transferProgress);
     }
 
     @After
     public void closeStream() {
-        IoUtils.closeQuietly(this.inputStream);
+        IoUtils.closeQuietly(this.outputStream);
     }
 
     @Test
-    public void read() throws IOException {
-        int expected = this.inputStream.read();
-        assertArrayEquals(new byte[]{(byte) expected}, this.transferProgress.getBuffer());
+    public void write() throws IOException {
+        this.outputStream.write(1);
+        assertArrayEquals(new byte[]{(byte) 1}, this.transferProgress.getBuffer());
         assertEquals(1, this.transferProgress.getLength());
     }
 
     @Test
     public void readByteArray() throws IOException {
         byte[] buffer = new byte[SIZE];
-        int length = this.inputStream.read(buffer);
+        Arrays.fill(buffer, (byte) 1);
+        this.outputStream.write(buffer);
+
         assertArrayEquals(buffer, this.transferProgress.getBuffer());
-        assertEquals(length, this.transferProgress.getLength());
+        assertEquals(SIZE, this.transferProgress.getLength());
     }
 
     @Test
     public void readyByteArrayLength() throws IOException {
         byte[] buffer = new byte[SIZE];
-        int length = this.inputStream.read(buffer, 0, SIZE);
+        Arrays.fill(buffer, (byte) 1);
+        this.outputStream.write(buffer, 0, SIZE);
 
         assertArrayEquals(buffer, this.transferProgress.getBuffer());
-        assertEquals(length, this.transferProgress.getLength());
+        assertEquals(SIZE, this.transferProgress.getLength());
     }
 
     @Test
     public void readyByteArrayOffsetLength() throws IOException {
         byte[] buffer = new byte[BIG_SIZE];
-        int length = this.inputStream.read(buffer, START_POSITION, SIZE);
+        Arrays.fill(buffer, START_POSITION, END_POSITION, (byte) 1);
+        this.outputStream.write(buffer, START_POSITION, SIZE);
 
         byte[] expected = new byte[SIZE];
         System.arraycopy(buffer, START_POSITION, expected, 0, SIZE);
 
         assertArrayEquals(expected, this.transferProgress.getBuffer());
-        assertEquals(length, this.transferProgress.getLength());
+        assertEquals(SIZE, this.transferProgress.getLength());
     }
 }

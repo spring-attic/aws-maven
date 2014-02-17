@@ -39,7 +39,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.build.aws.maven.matchers.Matchers.eq;
 
-public final class SimpleStorageServiceWagonIntegrationTests {
+public final class SimpleStorageServiceWagonIntegrationTest {
 
     private static final String FILE_NAME = "robots.txt";
 
@@ -92,14 +92,14 @@ public final class SimpleStorageServiceWagonIntegrationTests {
 
     @Test
     public void doesRemoteResourceExistExists() {
-        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTests.BUCKET_NAME,
+        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTest.BUCKET_NAME,
                 BASE_DIRECTORY + FILE_NAME)).thenReturn(this.objectMetadata);
         assertTrue(this.wagon.doesRemoteResourceExist(FILE_NAME));
     }
 
     @Test
     public void doesRemoteResourceExistDoesNotExist() {
-        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTests.BUCKET_NAME,
+        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTest.BUCKET_NAME,
                 BASE_DIRECTORY + FILE_NAME)).thenThrow(new AmazonServiceException(""));
         assertFalse(this.wagon.doesRemoteResourceExist(FILE_NAME));
     }
@@ -107,7 +107,7 @@ public final class SimpleStorageServiceWagonIntegrationTests {
     @Test
     public void isRemoteResourceNewerNewer() throws ResourceDoesNotExistException {
         when(this.objectMetadata.getLastModified()).thenReturn(new Date());
-        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTests.BUCKET_NAME,
+        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTest.BUCKET_NAME,
                 BASE_DIRECTORY + FILE_NAME)).thenReturn(this.objectMetadata);
 
         assertTrue(this.wagon.isRemoteResourceNewer(FILE_NAME, 0));
@@ -116,7 +116,7 @@ public final class SimpleStorageServiceWagonIntegrationTests {
     @Test
     public void isRemoteResourceNewerOlder() throws ResourceDoesNotExistException {
         when(this.objectMetadata.getLastModified()).thenReturn(new Date());
-        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTests.BUCKET_NAME,
+        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTest.BUCKET_NAME,
                 BASE_DIRECTORY + FILE_NAME)).thenReturn(this.objectMetadata);
 
         assertFalse(this.wagon.isRemoteResourceNewer(FILE_NAME, Long.MAX_VALUE));
@@ -124,7 +124,7 @@ public final class SimpleStorageServiceWagonIntegrationTests {
 
     @Test
     public void isRemoteResourceNewerNoLastModified() throws ResourceDoesNotExistException {
-        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTests.BUCKET_NAME,
+        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTest.BUCKET_NAME,
                 BASE_DIRECTORY + FILE_NAME)).thenReturn(this.objectMetadata);
 
         assertTrue(this.wagon.isRemoteResourceNewer(FILE_NAME, 0));
@@ -132,7 +132,7 @@ public final class SimpleStorageServiceWagonIntegrationTests {
 
     @Test(expected = ResourceDoesNotExistException.class)
     public void isRemoteResourceNewerDoesNotExist() throws ResourceDoesNotExistException {
-        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTests.BUCKET_NAME,
+        when(this.amazonS3.getObjectMetadata(SimpleStorageServiceWagonIntegrationTest.BUCKET_NAME,
                 BASE_DIRECTORY + FILE_NAME)).thenThrow(new AmazonServiceException(""));
         this.wagon.isRemoteResourceNewer(FILE_NAME, 0);
     }
@@ -186,7 +186,7 @@ public final class SimpleStorageServiceWagonIntegrationTests {
 
     @Test
     public void getResource() throws TransferFailedException, FileNotFoundException, ResourceDoesNotExistException {
-        when(this.amazonS3.getObject(SimpleStorageServiceWagonIntegrationTests.BUCKET_NAME,
+        when(this.amazonS3.getObject(SimpleStorageServiceWagonIntegrationTest.BUCKET_NAME,
                 BASE_DIRECTORY + FILE_NAME)).thenReturn(this.s3Object);
         when(this.s3Object.getObjectContent())
                 .thenReturn(new S3ObjectInputStream(new FileInputStream("src/test/resources/test.txt"), null));
@@ -202,7 +202,7 @@ public final class SimpleStorageServiceWagonIntegrationTests {
 
     @Test(expected = ResourceDoesNotExistException.class)
     public void getResourceSourceDoesNotExist() throws TransferFailedException, ResourceDoesNotExistException {
-        when(this.amazonS3.getObject(SimpleStorageServiceWagonIntegrationTests.BUCKET_NAME,
+        when(this.amazonS3.getObject(SimpleStorageServiceWagonIntegrationTest.BUCKET_NAME,
                 BASE_DIRECTORY + FILE_NAME)).thenThrow(new AmazonServiceException(""));
         File target = new File("target/robots.txt");
         this.wagon.getResource(FILE_NAME, target, this.transferProgress);

@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public final class S3UtilsTests {
+public final class S3UtilsTest {
 
     private static final int PORT = 100;
 

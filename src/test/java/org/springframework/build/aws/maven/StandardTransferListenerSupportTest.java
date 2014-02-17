@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.build.aws.maven.matchers.Matchers.eq;
 
-public final class StandardTransferListenerSupportTests {
+public final class StandardTransferListenerSupportTest {
 
     private static final int REQUEST_TYPE = TransferEvent.REQUEST_GET;
 

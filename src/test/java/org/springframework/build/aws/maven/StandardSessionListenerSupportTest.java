@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.build.aws.maven.matchers.Matchers.eq;
 
-public final class StandardSessionListenerSupportTests {
+public final class StandardSessionListenerSupportTest {
 
     private final Wagon wagon = mock(Wagon.class);
 

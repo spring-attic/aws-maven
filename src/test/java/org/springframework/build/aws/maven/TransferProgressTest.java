@@ -23,7 +23,7 @@ import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public final class TransferProgressTests {
+public final class TransferProgressTest {
 
     private static final int REQUEST_TYPE = TransferEvent.REQUEST_GET;
 

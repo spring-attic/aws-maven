@@ -24,7 +24,7 @@ import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public final class NullProtectingProxyInfoProviderTests {
+public final class NullProtectingProxyInfoProviderTest {
 
     private final ProxyInfo proxyInfo = mock(ProxyInfo.class);
 

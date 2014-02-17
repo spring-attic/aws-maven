@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public final class RegionTests {
+public final class RegionTest {
 
     @Test
     public void test() {

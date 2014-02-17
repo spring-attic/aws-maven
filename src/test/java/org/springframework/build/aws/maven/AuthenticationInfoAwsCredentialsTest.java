@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public final class AuthenticationInfoAwsCredentialsTests {
+public final class AuthenticationInfoAwsCredentialsTest {
 
     private final AuthenticationInfo authenticationInfo = mock(AuthenticationInfo.class);
 
