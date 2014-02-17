@@ -30,6 +30,7 @@ import org.mockito.ArgumentCaptor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +63,7 @@ public final class SimpleStorageServiceWagonIntegrationTest {
     private final SimpleStorageServiceWagon wagon =
             new SimpleStorageServiceWagon(this.amazonS3, BUCKET_NAME, BASE_DIRECTORY);
 
+
     @Test
     public void regionConnections() throws WagonException {
         SimpleStorageServiceWagon remoteConnectingWagon = new SimpleStorageServiceWagon();
@@ -70,24 +72,35 @@ public final class SimpleStorageServiceWagonIntegrationTest {
         authenticationInfo.setUserName(System.getProperty("access.key"));
         authenticationInfo.setPassword(System.getProperty("secret.key"));
 
-        String[] buckets = new String[]{ //
-                "test.aws-maven.ireland", //
-                "test.aws-maven.eu", //
-                "test.aws-maven.northern-california", //
-                "test.aws-maven.oregon", //
-                "test.aws-maven.sao-paulo", //
-                "test.aws-maven.singapore", //
-                "test.aws-maven.sydney", //
-                "test.aws-maven.tokyo", //
-                "test.aws-maven.us" //
-        };
-
-        for (String bucket : buckets) {
+        for (String bucket : getBuckets()) {
             Repository repository = new Repository("test", String.format("s3://%s/", bucket));
             remoteConnectingWagon.connectToRepository(repository, authenticationInfo, null);
             assertNotNull(remoteConnectingWagon.getFileList(""));
             remoteConnectingWagon.disconnectFromRepository();
         }
+    }
+
+    private List<String> getBuckets() {
+        List<String> buckets = new ArrayList<String>();
+
+        String value = System.getProperty("buckets");
+        if (value != null) {
+            for (String bucket : value.split(",")) {
+                buckets.add(bucket.trim());
+            }
+        } else {
+            buckets.add("test.aws-maven.ireland");
+            buckets.add("test.aws-maven.eu");
+            buckets.add("test.aws-maven.northern-california");
+            buckets.add("test.aws-maven.oregon");
+            buckets.add("test.aws-maven.sao-paulo");
+            buckets.add("test.aws-maven.singapore");
+            buckets.add("test.aws-maven.sydney");
+            buckets.add("test.aws-maven.tokyo");
+            buckets.add("test.aws-maven.us");
+        }
+
+        return buckets;
     }
 
     @Test
