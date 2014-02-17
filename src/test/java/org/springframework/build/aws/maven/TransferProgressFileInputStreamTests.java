@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2010-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package org.springframework.build.aws.maven;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import org.junit.After;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public final class TransferProgressFileInputStreamTests {
 
@@ -34,14 +34,13 @@ public final class TransferProgressFileInputStreamTests {
 
     private static final int SIZE = 20;
 
-    private final File file = new File("src/test/resources/test.txt");
-
     private final StubTransferProgress transferProgress = new StubTransferProgress();
 
     private final TransferProgressFileInputStream inputStream;
 
     public TransferProgressFileInputStreamTests() throws FileNotFoundException {
-        this.inputStream = new TransferProgressFileInputStream(this.file, this.transferProgress);
+        this.inputStream = new TransferProgressFileInputStream(new File("src/test/resources/test.txt"),
+                this.transferProgress);
     }
 
     @After
@@ -52,7 +51,7 @@ public final class TransferProgressFileInputStreamTests {
     @Test
     public void read() throws IOException {
         int expected = this.inputStream.read();
-        assertArrayEquals(new byte[] { (byte) expected }, this.transferProgress.getBuffer());
+        assertArrayEquals(new byte[]{(byte) expected}, this.transferProgress.getBuffer());
         assertEquals(1, this.transferProgress.getLength());
     }
 

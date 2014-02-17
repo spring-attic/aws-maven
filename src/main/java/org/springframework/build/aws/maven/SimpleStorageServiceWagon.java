@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2011 the original author or authors.
+ * Copyright 2010-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,13 @@
 
 package org.springframework.build.aws.maven;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.internal.Mimetypes;
+import com.amazonaws.services.s3.model.*;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
@@ -35,19 +30,12 @@ import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.proxy.ProxyInfoProvider;
 import org.apache.maven.wagon.repository.Repository;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.internal.Mimetypes;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * An implementation of the Maven Wagon interface that allows you to access the Amazon S3 service. URLs that reference
@@ -85,10 +73,11 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     }
 
     @Override
-    protected void connectToRepository(Repository repository, AuthenticationInfo authenticationInfo, ProxyInfoProvider proxyInfoProvider)
-        throws AuthenticationException {
+    protected void connectToRepository(Repository repository, AuthenticationInfo authenticationInfo,
+                                       ProxyInfoProvider proxyInfoProvider) throws AuthenticationException {
         if (this.amazonS3 == null) {
-            AWSCredentials awsCredentials = authenticationInfo == null ? null : new AuthenticationInfoAWSCredentials(authenticationInfo);
+            AWSCredentials awsCredentials = authenticationInfo == null ? null :
+                    new AuthenticationInfoAWSCredentials(authenticationInfo);
             ClientConfiguration clientConfiguration = S3Utils.getClientConfiguration(proxyInfoProvider);
 
             this.bucketName = S3Utils.getBucketName(repository);
@@ -121,7 +110,7 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     protected boolean isRemoteResourceNewer(String resourceName, long timestamp) throws ResourceDoesNotExistException {
         try {
             Date lastModified = getObjectMetadata(resourceName).getLastModified();
-            return lastModified == null ? true : lastModified.getTime() > timestamp;
+            return lastModified == null || lastModified.getTime() > timestamp;
         } catch (AmazonServiceException e) {
             throw new ResourceDoesNotExistException(String.format("'%s' does not exist", resourceName), e);
         }
@@ -136,9 +125,9 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
             Pattern pattern = Pattern.compile(String.format(RESOURCE_FORMAT, prefix));
 
             ListObjectsRequest listObjectsRequest = new ListObjectsRequest() //
-            .withBucketName(this.bucketName) //
-            .withPrefix(prefix) //
-            .withDelimiter("/");
+                    .withBucketName(this.bucketName) //
+                    .withPrefix(prefix) //
+                    .withDelimiter("/");
 
             ObjectListing objectListing;
 
@@ -157,8 +146,8 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     }
 
     @Override
-    protected void getResource(String resourceName, File destination, TransferProgress transferProgress) throws TransferFailedException,
-        ResourceDoesNotExistException {
+    protected void getResource(String resourceName, File destination, TransferProgress transferProgress)
+            throws TransferFailedException, ResourceDoesNotExistException {
         InputStream in = null;
         OutputStream out = null;
         try {
@@ -181,7 +170,7 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
 
     @Override
     protected void putResource(File source, String destination, TransferProgress transferProgress) throws TransferFailedException,
-        ResourceDoesNotExistException {
+            ResourceDoesNotExistException {
         String key = getKey(destination);
 
         mkdirs(key, 0);

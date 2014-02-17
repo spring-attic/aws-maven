@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2010-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@
 
 package org.springframework.build.aws.maven;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.springframework.build.aws.maven.matchers.Matchers.eq;
-
-import java.io.IOException;
-
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.events.SessionEvent;
 import org.apache.maven.wagon.events.SessionListener;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.springframework.build.aws.maven.matchers.Matchers.eq;
 
 public final class StandardSessionListenerSupportTests {
 
@@ -36,7 +36,8 @@ public final class StandardSessionListenerSupportTests {
 
     private final SessionListener sessionListener = mock(SessionListener.class);
 
-    private final StandardSessionListenerSupport sessionListenerSupport = new StandardSessionListenerSupport(this.wagon);
+    private final StandardSessionListenerSupport sessionListenerSupport =
+            new StandardSessionListenerSupport(this.wagon);
 
     @Before
     public void addSessionListener() {
@@ -65,19 +66,22 @@ public final class StandardSessionListenerSupportTests {
     @Test
     public void fireSessionDisconnecting() {
         this.sessionListenerSupport.fireSessionDisconnecting();
-        verify(this.sessionListener).sessionDisconnecting(eq(new SessionEvent(this.wagon, SessionEvent.SESSION_DISCONNECTING)));
+        verify(this.sessionListener).sessionDisconnecting(eq(new SessionEvent(this.wagon,
+                SessionEvent.SESSION_DISCONNECTING)));
     }
 
     @Test
     public void fireSessionDisonnected() {
         this.sessionListenerSupport.fireSessionDisconnected();
-        verify(this.sessionListener).sessionDisconnected(eq(new SessionEvent(this.wagon, SessionEvent.SESSION_DISCONNECTED)));
+        verify(this.sessionListener).sessionDisconnected(eq(new SessionEvent(this.wagon,
+                SessionEvent.SESSION_DISCONNECTED)));
     }
 
     @Test
     public void fireSessionConnectionRefused() {
         this.sessionListenerSupport.fireSessionConnectionRefused();
-        verify(this.sessionListener).sessionConnectionRefused(eq(new SessionEvent(this.wagon, SessionEvent.SESSION_CONNECTION_REFUSED)));
+        verify(this.sessionListener).sessionConnectionRefused(eq(new SessionEvent(this.wagon,
+                SessionEvent.SESSION_CONNECTION_REFUSED)));
     }
 
     @Test
@@ -89,7 +93,8 @@ public final class StandardSessionListenerSupportTests {
     @Test
     public void fireSessionLoggedOff() {
         this.sessionListenerSupport.fireSessionLoggedOff();
-        verify(this.sessionListener).sessionLoggedOff(eq(new SessionEvent(this.wagon, SessionEvent.SESSION_LOGGED_OFF)));
+        verify(this.sessionListener).sessionLoggedOff(eq(new SessionEvent(this.wagon,
+                SessionEvent.SESSION_LOGGED_OFF)));
     }
 
     @Test

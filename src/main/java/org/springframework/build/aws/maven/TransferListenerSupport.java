@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2010-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,14 @@ interface TransferListenerSupport {
 
     /**
      * Add a {@link TransferListener} to be notified
-     * 
+     *
      * @param transferListener The {@link TransferListener} to be notified
      */
     void addTransferListener(TransferListener transferListener);
 
     /**
      * Remove a {@link TransferListener} so that it is no longer notified
-     * 
+     *
      * @param transferListener The {@link TransferListener} that should no longer be notified
      */
     void removeTransferListener(TransferListener transferListener);
@@ -38,61 +38,57 @@ interface TransferListenerSupport {
     /**
      * Returns whether a {@link TransferListener} is already in the collection of {@link TransferListener}s to be
      * notified
-     * 
+     *
      * @param transferListener the {@link TransferListener} to look for
      * @return {@code true} if the {@link TransferListener} is already in the collection of {@link TransferListener}s to
-     *         be notified, otherwise {@code false}
+     * be notified, otherwise {@code false}
      */
     boolean hasTransferListener(TransferListener transferListener);
 
     /**
      * Notify {@link TransferListener}s that a transfer is being initiated
-     * 
-     * @param resource The resource being transfered
+     *
+     * @param resource    The resource being transfered
      * @param requestType The type of request to be executed
-     * 
      * @see org.apache.maven.wagon.events.TransferEvent#TRANSFER_INITIATED
      */
     void fireTransferInitiated(Resource resource, int requestType);
 
     /**
      * Notify {@link TransferListener}s that a transfer has started successfully
-     * 
-     * @param resource The resource being transfered
+     *
+     * @param resource    The resource being transfered
      * @param requestType The type of request being executed
-     * 
      * @see org.apache.maven.wagon.events.TransferEvent#TRANSFER_STARTED
      */
     void fireTransferStarted(Resource resource, int requestType);
 
     /**
      * Notify {@link TransferListener}s about the progress of a transfer
-     * 
-     * @param resource The resource being transfered
+     *
+     * @param resource    The resource being transfered
      * @param requestType The type of request being executed
-     * @param buffer The buffer of bytes being transfered
-     * @param length The length of the data in the buffer
-     * 
+     * @param buffer      The buffer of bytes being transfered
+     * @param length      The length of the data in the buffer
      * @see org.apache.maven.wagon.events.TransferEvent#TRANSFER_PROGRESS
      */
     void fireTransferProgress(Resource resource, int requestType, byte[] buffer, int length);
 
     /**
      * Notify {@link TransferListener}s that the transfer was completed successfully
-     * 
-     * @param resource The resource being transfered
+     *
+     * @param resource    The resource being transfered
      * @param requestType The type of request executed
-     * 
      * @see org.apache.maven.wagon.events.TransferEvent#TRANSFER_COMPLETED
      */
     void fireTransferCompleted(Resource resource, int requestType);
 
     /**
      * Notify {@link TransferListener}s that an error occurred during the transfer
-     * 
-     * @param resource The resource being transfered
+     *
+     * @param resource    The resource being transfered
      * @param requestType The type of the request being executed
-     * @param exception The error that occurred
+     * @param exception   The error that occurred
      */
     void fireTransferError(Resource resource, int requestType, Exception exception);
 }

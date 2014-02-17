@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2010-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package org.springframework.build.aws.maven;
 
+import org.apache.maven.wagon.authentication.AuthenticationInfo;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import org.apache.maven.wagon.authentication.AuthenticationInfo;
-import org.junit.Test;
 
 public final class AuthenticationInfoAwsCredentialsTests {
 
     private final AuthenticationInfo authenticationInfo = mock(AuthenticationInfo.class);
 
-    private final AuthenticationInfoAWSCredentials awsCredentials = new AuthenticationInfoAWSCredentials(this.authenticationInfo);
+    private final AuthenticationInfoAWSCredentials awsCredentials =
+            new AuthenticationInfoAWSCredentials(this.authenticationInfo);
 
     @Test
     public void getAWSAccessKeyId() {
