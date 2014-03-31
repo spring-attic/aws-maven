@@ -64,4 +64,24 @@ Finally the `~/.m2/settings.xml` must be updated to include access and secret ke
 	    ...
 	</settings>
 
+Note that [Amazon IAM][iam] permissions need to be configured accordingly. The `s3:GetBucketLocation` action is required in addition to the bucket read/write permission.
+
+	{
+	  "Statement": [
+	    {
+	      "Effect": "Allow",
+	      "Action": "s3:*",
+	      "Resource": "arn:aws:s3:::distribution.bucket/*"
+	    }
+	  ],
+	  "Statement": [
+	    {
+	      "Effect": "Allow",
+	      "Action": "s3:GetBucketLocation",
+	      "Resource": "arn:aws:s3:::*"
+	    }
+	  ]
+	}
+
 [aws-maven]: http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.springframework.build%22%20AND%20a%3A%22aws-maven%22
+[iam]: http://aws.amazon.com/iam/
