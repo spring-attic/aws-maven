@@ -68,6 +68,12 @@ Finally the `~/.m2/settings.xml` must be updated to include access and secret ke
 </settings>
 ```
 
+Alternatively, the access and secret keys for the account can be provided using
+
+* `AWS_ACCESS_KEY_ID` (or `AWS_ACCESS_KEY`) and `AWS_SECRET_KEY` (or `AWS_SECRET_ACCESS_KEY`) [environment variables][env-var]
+* `aws.accessKeyId` and `aws.secretKey` [system properties][sys-prop]
+* The Amazon EC2 [Instance Metadata Service][instance-metadata]
+
 ## Making Artifacts Public
 This wagon doesn't set an explict ACL for each artfact that is uploaded.  Instead you should create an AWS Bucket Policy to set permissions on objects.  A bucket policy can be set in the [AWS Console][console] and can be generated using the [AWS Policy Generator][policy-generator].
 
@@ -160,6 +166,9 @@ aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
 [aws-maven]: http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.springframework.build%22%20AND%20a%3A%22aws-maven%22
 [cli]: http://aws.amazon.com/documentation/cli/
 [console]: https://console.aws.amazon.com/s3
+[env-var]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/EnvironmentVariableCredentialsProvider.html
+[instance-metadata]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/InstanceProfileCredentialsProvider.html
 [policy-generator]: http://awspolicygen.s3.amazonaws.com/policygen.html
 [s3]: http://aws.amazon.com/s3/
+[sys-prop]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/SystemPropertiesCredentialsProvider.html
 [wagon]: http://maven.apache.org/wagon/
