@@ -172,3 +172,27 @@ aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
 [s3]: http://aws.amazon.com/s3/
 [sys-prop]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/SystemPropertiesCredentialsProvider.html
 [wagon]: http://maven.apache.org/wagon/
+
+## Connecting through an HTTP Proxy
+
+You need to add the following configuration to your settings.xml file:
+
+```xml
+<settings>
+  ...
+  <proxies>
+     ...
+     <proxy>
+         <active>true</active>
+         <protocol>s3</protocol>
+         <host>myproxy.host.com</host>
+         <port>8080</port>
+         <username>proxyuser</username>
+         <password>somepassword</password>
+         <nonProxyHosts>www.google.com|*.somewhere.com</nonProxyHosts>
+     </proxy>
+     ...
+    </proxies>
+  ...
+</settings>
+```
