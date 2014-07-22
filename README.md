@@ -74,6 +74,29 @@ Alternatively, the access and secret keys for the account can be provided using
 * `aws.accessKeyId` and `aws.secretKey` [system properties][sys-prop]
 * The Amazon EC2 [Instance Metadata Service][instance-metadata]
 
+## Connecting through a Proxy
+For being able to connect behind an HTTP proxy you need to add the following configuration to `~/.m2/settings.xml`:
+
+```xml
+<settings>
+  ...
+  <proxies>
+     ...
+     <proxy>
+         <active>true</active>
+         <protocol>s3</protocol>
+         <host>myproxy.host.com</host>
+         <port>8080</port>
+         <username>proxyuser</username>
+         <password>somepassword</password>
+         <nonProxyHosts>www.google.com|*.somewhere.com</nonProxyHosts>
+     </proxy>
+     ...
+    </proxies>
+  ...
+</settings>
+```
+
 ## Making Artifacts Public
 This wagon doesn't set an explict ACL for each artfact that is uploaded.  Instead you should create an AWS Bucket Policy to set permissions on objects.  A bucket policy can be set in the [AWS Console][console] and can be generated using the [AWS Policy Generator][policy-generator].
 
