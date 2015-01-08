@@ -21,6 +21,7 @@ enum Region {
     US_WEST_OREGON("us-west-2", "s3-us-west-2.amazonaws.com"), //
     US_WEST_NORTHERN_CALIFORNIA("us-west-1", "s3-us-west-1.amazonaws.com"), //
     EU("EU", "s3-eu-west-1.amazonaws.com"), //
+    EU_FRANKFURT("eu-central-1", "s3-eu-central-1.amazonaws.com"), //
     EU_IRELAND("eu-west-1", "s3-eu-west-1.amazonaws.com"), //
     GOV_CLOUD("us-gov-west-1", "us-gov-west-1.amazonaws.com"), //
     ASIA_PACIFIC_SINGAPORE("ap-southeast-1", "s3-ap-southeast-1.amazonaws.com"), //
