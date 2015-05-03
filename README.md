@@ -71,6 +71,7 @@ Finally the `~/.m2/settings.xml` must be updated to include access and secret ke
 Alternatively, the access and secret keys for the account can be provided using
 
 * `AWS_ACCESS_KEY_ID` (or `AWS_ACCESS_KEY`) and `AWS_SECRET_KEY` (or `AWS_SECRET_ACCESS_KEY`) [environment variables][env-var]
+* `AWS_PROFILE` [environment variable][profile-provider]
 * `aws.accessKeyId` and `aws.secretKey` [system properties][sys-prop]
 * The Amazon EC2 [Instance Metadata Service][instance-metadata]
 
@@ -167,6 +168,7 @@ aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
 [cli]: http://aws.amazon.com/documentation/cli/
 [console]: https://console.aws.amazon.com/s3
 [env-var]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/EnvironmentVariableCredentialsProvider.html
+[profile-provider]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/profile/ProfileCredentialsProvider.html
 [instance-metadata]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/InstanceProfileCredentialsProvider.html
 [policy-generator]: http://awspolicygen.s3.amazonaws.com/policygen.html
 [s3]: http://aws.amazon.com/s3/
