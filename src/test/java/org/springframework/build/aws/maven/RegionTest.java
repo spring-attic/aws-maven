@@ -28,6 +28,7 @@ public final class RegionTest {
         assertEndpoint("us-west-2", "s3-us-west-2.amazonaws.com");
         assertEndpoint("us-west-1", "s3-us-west-1.amazonaws.com");
         assertEndpoint("EU", "s3-eu-west-1.amazonaws.com");
+        assertEndpoint("eu-central-1", "s3-eu-central-1.amazonaws.com");
         assertEndpoint("ap-southeast-1", "s3-ap-southeast-1.amazonaws.com");
         assertEndpoint("ap-southeast-2", "s3-ap-southeast-2.amazonaws.com");
         assertEndpoint("ap-northeast-1", "s3-ap-northeast-1.amazonaws.com");
