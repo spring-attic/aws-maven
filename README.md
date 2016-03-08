@@ -74,6 +74,15 @@ Alternatively, the access and secret keys for the account can be provided using
 * `aws.accessKeyId` and `aws.secretKey` [system properties][sys-prop]
 * The Amazon EC2 [Instance Metadata Service][instance-metadata]
 
+## Using IAM roles
+
+If users want to / or need to use roles while accessing services, an assumed role can be taken into use by defining two environment variables.
+
+export AWS_ASSUME_ROLE_ARN="ARN:TO:ROLE"
+export AWS_ASSUME_ROLE_NAME="session-name-for-role
+
+Later on support can be added for other configuration methods.
+
 ## Making Artifacts Public
 This wagon doesn't set an explict ACL for each artfact that is uploaded.  Instead you should create an AWS Bucket Policy to set permissions on objects.  A bucket policy can be set in the [AWS Console][console] and can be generated using the [AWS Policy Generator][policy-generator].
 

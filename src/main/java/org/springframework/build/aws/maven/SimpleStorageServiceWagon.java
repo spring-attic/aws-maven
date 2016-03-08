@@ -18,10 +18,14 @@ package org.springframework.build.aws.maven;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClient;
+import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
+import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
@@ -33,6 +37,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +46,7 @@ import java.util.regex.Pattern;
  * the S3 service should be in the form of <code>s3://bucket.name</code>. As an example
  * <code>s3://static.springframework.org</code> would put files into the <code>static.springframework.org</code> bucket
  * on the S3 service.
- * <p/>
+ * <p>
  * This implementation uses the <code>username</code> and <code>passphrase</code> portions of the server authentication
  * metadata for credentials.
  */
@@ -50,6 +55,10 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     private static final String KEY_FORMAT = "%s%s";
 
     private static final String RESOURCE_FORMAT = "%s(.*)";
+
+    private static final String roleArnKey = "AWS_ASSUME_ROLE_ARN";
+
+    private static final String roleSessionName = "AWS_ASSUME_ROLE_NAME";
 
     private volatile AmazonS3 amazonS3;
 
@@ -82,10 +91,48 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
             this.bucketName = S3Utils.getBucketName(repository);
             this.baseDirectory = S3Utils.getBaseDirectory(repository);
 
-            this.amazonS3 = new AmazonS3Client(credentialsProvider, clientConfiguration);
+            if (isAssumedRoleRequested()) {
+                this.amazonS3 = new AmazonS3Client(
+                        getAssumedCredentialsIfRequested(credentialsProvider), clientConfiguration);
+            } else {
+                this.amazonS3 = new AmazonS3Client(credentialsProvider, clientConfiguration);
+            }
+
             Region region = Region.fromLocationConstraint(this.amazonS3.getBucketLocation(this.bucketName));
             this.amazonS3.setEndpoint(region.getEndpoint());
         }
+    }
+
+    protected BasicSessionCredentials getAssumedCredentialsIfRequested(AuthenticationInfoAWSCredentialsProviderChain credentials) {
+
+        AWSSecurityTokenServiceClient stsClient = new
+                AWSSecurityTokenServiceClient(credentials);
+
+        Map<String, String> env = System.getenv();
+        String ARN = env.get(roleArnKey);
+        String SESSION = env.get(roleSessionName);
+
+        AssumeRoleRequest assumeRequest = new AssumeRoleRequest()
+                .withRoleArn(ARN)
+                .withRoleSessionName(SESSION);
+
+        AssumeRoleResult assumeResult = stsClient.assumeRole(assumeRequest);
+
+        BasicSessionCredentials assumedCredentials =
+                new BasicSessionCredentials(
+                        assumeResult.getCredentials().getAccessKeyId(),
+                        assumeResult.getCredentials().getSecretAccessKey(),
+                        assumeResult.getCredentials().getSessionToken());
+
+        return assumedCredentials;
+    }
+
+    protected boolean isAssumedRoleRequested() {
+        Map<String, String> env = System.getenv();
+        if (env.containsKey(roleArnKey) && env.containsKey(roleSessionName)) {
+            return true;
+        }
+        return false;
     }
 
     @Override
