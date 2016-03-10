@@ -1,8 +1,30 @@
 # AWS Maven Wagon
-This project is a [Maven Wagon][wagon] for [Amazon S3][s3].  In order to to publish artifacts to an S3 bucket, the user (as identified by their access key) must be listed as an owner on the bucket.
+
+This project is a fork from [https://github.com/spring-projects/aws-maven](https://github.com/spring-projects/aws-maven) to 
+support development and operations at Finnish Brodcasting Company ( YLE ). No guarantees are made for support or updating
+the component, but as long as we are using it actively we will update it as we need it.
 
 ## Usage
-To publish Maven artifacts to S3 a build extension must be defined in a project's `pom.xml`.  The latest version of the wagon can be found on the [`aws-maven`][aws-maven] page in Maven Central.
+To publish Maven artifacts to S3 a build extension must be defined in a project's `pom.xml`.  The latest version of the wagon can 
+be found from from YLE public mvn repository 
+
+TODO: http url for yle-maven-public-repository-test/release repository
+
+To get the dependency add to your pom:
+
+
+```xml
+<repositories>
+    <repository>
+      <id>yle-public</id>
+      <name>Yle public repository</name>
+      <url>http://TODO_YLE_MAVEN_URL_repo.maven.yle.fi</url>
+      <layout>default</layout>
+    </repository>
+</repositories>
+```
+
+And plugin dependency:
 
 ```xml
 <project>
@@ -12,9 +34,9 @@ To publish Maven artifacts to S3 a build extension must be defined in a project'
     <extensions>
       ...
       <extension>
-        <groupId>org.springframework.build</groupId>
-        <artifactId>aws-maven</artifactId>
-        <version>5.0.0.RELEASE</version>
+      <groupId>fi.yle.tools</groupId>
+      <artifactId>aws-maven</artifactId>
+      <version>1.0.0</version>
       </extension>
       ...
     </extensions>
@@ -23,6 +45,8 @@ To publish Maven artifacts to S3 a build extension must be defined in a project'
   ...
 </project>
 ```
+
+This allows then using dependencies from s3 repositories as well as publish to s3 repositories.
 
 Once the build extension is configured distribution management repositories can be defined in the `pom.xml` with an `s3://` scheme.
 
@@ -45,7 +69,8 @@ Once the build extension is configured distribution management repositories can 
 </project>
 ```
 
-Finally the `~/.m2/settings.xml` must be updated to include access and secret keys for the account. The access key should be used to populate the `username` element, and the secret access key should be used to populate the `password` element.
+Finally the `~/.m2/settings.xml` should be updated to include access and secret keys for the account. The access key should 
+be used to populate the `username` element, and the secret access key should be used to populate the `password` element.
 
 ```xml
 <settings>
@@ -73,18 +98,21 @@ Alternatively, the access and secret keys for the account can be provided using
 * `AWS_ACCESS_KEY_ID` (or `AWS_ACCESS_KEY`) and `AWS_SECRET_KEY` (or `AWS_SECRET_ACCESS_KEY`) [environment variables][env-var]
 * `aws.accessKeyId` and `aws.secretKey` [system properties][sys-prop]
 * The Amazon EC2 [Instance Metadata Service][instance-metadata]
+* Soon: AWS-Profile
 
 ## Using IAM roles
 
 If users want to / or need to use roles while accessing services, an assumed role can be taken into use by defining two environment variables.
 
 export AWS_ASSUME_ROLE_ARN="ARN:TO:ROLE"
+
 export AWS_ASSUME_ROLE_NAME="session-name-for-role
 
-Later on support can be added for other configuration methods.
 
 ## Making Artifacts Public
-This wagon doesn't set an explict ACL for each artfact that is uploaded.  Instead you should create an AWS Bucket Policy to set permissions on objects.  A bucket policy can be set in the [AWS Console][console] and can be generated using the [AWS Policy Generator][policy-generator].
+This wagon doesn't set an explict ACL for each artfact that is uploaded.  Instead you should create an AWS Bucket Policy to set 
+permissions on objects.  A bucket policy can be set in the [AWS Console][console] and can be generated using the 
+[AWS Policy Generator][policy-generator].
 
 In order to make the contents of a bucket public you need to add statements with the following details to your policy:
 
@@ -172,7 +200,6 @@ EOF
 aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
 ```
 
-[aws-maven]: http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.springframework.build%22%20AND%20a%3A%22aws-maven%22
 [cli]: http://aws.amazon.com/documentation/cli/
 [console]: https://console.aws.amazon.com/s3
 [env-var]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/EnvironmentVariableCredentialsProvider.html
