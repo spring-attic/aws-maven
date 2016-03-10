@@ -119,6 +119,13 @@
         <version>2.2</version>
       </plugin>
     </plugins>
+    <extensions>
+      <extension>
+        <groupId>fi.yle.tools</groupId>
+        <artifactId>aws-maven</artifactId>
+        <version>1.0.0</version>
+      </extension>
+    </extensions>
   </build>
 
   <url>https://github.com/Yleisradio/aws-maven</url>
@@ -147,12 +154,12 @@
     <repository>
       <id>release</id>
       <name>Yleisradio Yhteiset Release Repository</name>
-      <url>s3://yle-maven-public-repository-test/release</url>
+      <url>s3://areena-ovp-maven-repository/release</url>
     </repository>
     <snapshotRepository>
       <id>snapshot</id>
       <name>Yleisradio Yhteiset Snapshot Repository</name>
-      <url>s3://yle-maven-public-repository-test/snapshot</url>
+      <url>s3://areena-ovp-maven-repository/snapshot</url>
     </snapshotRepository>
   </distributionManagement>
 

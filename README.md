@@ -4,6 +4,12 @@ This project is a fork from [https://github.com/spring-projects/aws-maven](https
 support development and operations at Finnish Brodcasting Company ( YLE ). No guarantees are made for support or updating
 the component, but as long as we are using it actively we will update it as we need it.
 
+## Building and deploying this wagon
+
+At the moment this component cannot be deployed by just running mvn deploy, but this works:
+
+mvn deploy:deploy-file -DpomFile=pom.xml -Dfile=target/aws-maven-1.0.0.jar  -Durl=s3://areena-ovp-maven-repository/release
+
 ## Usage
 To publish Maven artifacts to S3 a build extension must be defined in a project's `pom.xml`.  The latest version of the wagon can 
 be found from from YLE public mvn repository 
