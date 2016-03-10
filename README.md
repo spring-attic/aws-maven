@@ -98,7 +98,7 @@ Alternatively, the access and secret keys for the account can be provided using
 * `AWS_ACCESS_KEY_ID` (or `AWS_ACCESS_KEY`) and `AWS_SECRET_KEY` (or `AWS_SECRET_ACCESS_KEY`) [environment variables][env-var]
 * `aws.accessKeyId` and `aws.secretKey` [system properties][sys-prop]
 * The Amazon EC2 [Instance Metadata Service][instance-metadata]
-* Soon: AWS-Profile
+* AWS-Profile ( Can be overridden with AWS_PROFILE variable )
 
 ## Using IAM roles
 
