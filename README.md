@@ -24,7 +24,7 @@ To get the dependency add to your pom:
     <repository>
       <id>yle-public</id>
       <name>Yle public repository</name>
-      <url>http://TODO_YLE_MAVEN_URL_repo.maven.yle.fi</url>
+      <url>http://areena-ovp-maven-repository.s3-website-eu-west-1.amazonaws.com/</url>
       <layout>default</layout>
     </repository>
 </repositories>
