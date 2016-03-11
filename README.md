@@ -4,6 +4,14 @@ This project is a fork from [https://github.com/spring-projects/aws-maven](https
 support development and operations at Finnish Brodcasting Company ( YLE ). No guarantees are made for support or updating
 the component, but as long as we are using it actively we will update it as we need it.
 
+Wagon also works with Leiningen out of the box.
+
+Add following to your project.clj
+
+    :plugins [[fi.yle.tools/aws-maven "1.1.0"]]
+    :plugin-repositories [["yle-repo" {:url "http://maven.c4.yle.fi/release"
+                                     :snapshots false}]]
+
 ## Building and deploying this wagon
 
 mvn install
