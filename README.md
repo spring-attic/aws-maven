@@ -6,9 +6,9 @@ the component, but as long as we are using it actively we will update it as we n
 
 ## Building and deploying this wagon
 
-At the moment this component cannot be deployed by just running mvn deploy, but this works:
+mvn install
 
-mvn deploy:deploy-file -DpomFile=pom.xml -Dfile=target/aws-maven-1.0.0.jar  -Durl=s3://areena-ovp-maven-repository/release
+mvn deploy
 
 ## Usage
 To publish Maven artifacts to S3 a build extension must be defined in a project's `pom.xml`.  The latest version of the wagon can 
