@@ -12,9 +12,7 @@ mvn deploy
 
 ## Usage
 To publish Maven artifacts to S3 a build extension must be defined in a project's `pom.xml`.  The latest version of the wagon can 
-be found from from YLE public mvn repository 
-
-TODO: http url for yle-maven-public-repository-test/release repository
+be found from from YLE public mvn repository http://maven.c4.yle.fi/release
 
 To get the dependency add to your pom:
 
@@ -24,7 +22,7 @@ To get the dependency add to your pom:
     <repository>
       <id>yle-public</id>
       <name>Yle public repository</name>
-      <url>http://areena-ovp-maven-repository.s3-website-eu-west-1.amazonaws.com/</url>
+      <url>http://maven.c4.yle.fi/release</url>
       <layout>default</layout>
     </repository>
 </repositories>

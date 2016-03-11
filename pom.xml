@@ -11,17 +11,6 @@
   <name>Amazon Web Services S3 Maven Wagon Support</name>
   <description>Standard Maven wagon support for s3:// urls and IAM roles</description>
 
-  <repositories>
-    <repository>
-      <id>yle-public</id>
-      <name>Yle public repository</name>
-      <url>http://maven.c4.yle.fi/release</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <pluginRepositories>
     <pluginRepository>
       <id>yle-public</id>
@@ -145,7 +134,7 @@
       <extension>
         <groupId>fi.yle.tools</groupId>
         <artifactId>aws-maven</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
       </extension>
     </extensions>
   </build>
