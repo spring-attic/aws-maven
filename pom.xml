@@ -15,7 +15,7 @@
     <repository>
       <id>yle-public</id>
       <name>Yle public repository</name>
-      <url>http://areena-ovp-maven-repository.s3-website-eu-west-1.amazonaws.com/release</url>
+      <url>http://maven.c4.yle.fi/release</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -26,7 +26,7 @@
     <pluginRepository>
       <id>yle-public</id>
       <name>Yle public repository</name>
-      <url>http://areena-ovp-maven-repository.s3-website-eu-west-1.amazonaws.com/release</url>
+      <url>http://maven.c4.yle.fi/release</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -176,12 +176,12 @@
     <repository>
       <id>release</id>
       <name>Yleisradio Yhteiset Release Repository</name>
-      <url>s3://areena-ovp-maven-repository/release</url>
+      <url>s3://maven.c4.yle.fi/release</url>
     </repository>
     <snapshotRepository>
       <id>snapshot</id>
       <name>Yleisradio Yhteiset Snapshot Repository</name>
-      <url>s3://areena-ovp-maven-repository/snapshot</url>
+      <url>s3://maven.c4.yle.fi/snapshot</url>
     </snapshotRepository>
   </distributionManagement>
 
