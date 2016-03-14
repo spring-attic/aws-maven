@@ -34,10 +34,7 @@ import org.apache.maven.wagon.proxy.ProxyInfoProvider;
 import org.apache.maven.wagon.repository.Repository;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,6 +56,10 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     private static final String roleArnKey = "AWS_ASSUME_ROLE_ARN";
 
     private static final String roleSessionName = "AWS_ASSUME_ROLE_NAME";
+
+    private static final String configPathEnvKey = "S3_MAVEN_CONFIG_FILE";
+
+    private static final String s3DefaultConfigPath = ".s3_config";
 
     private volatile AmazonS3 amazonS3;
 
@@ -108,9 +109,8 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
         AWSSecurityTokenServiceClient stsClient = new
                 AWSSecurityTokenServiceClient(credentials);
 
-        Map<String, String> env = System.getenv();
-        String ARN = env.get(roleArnKey);
-        String SESSION = env.get(roleSessionName);
+        String ARN = getAssumedRoleARN();
+        String SESSION = getAssumedRoleSessionName();
 
         AssumeRoleRequest assumeRequest = new AssumeRoleRequest()
                 .withRoleArn(ARN)
@@ -127,12 +127,39 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
         return assumedCredentials;
     }
 
-    protected boolean isAssumedRoleRequested() {
-        Map<String, String> env = System.getenv();
-        if (env.containsKey(roleArnKey) && env.containsKey(roleSessionName)) {
-            return true;
+    protected String getAssumedRoleVariableFromConfigFile(String key) {
+        String configPath = System.getenv(configPathEnvKey);
+        File config = new File(configPath != null ? configPath : s3DefaultConfigPath);
+        if (!config.exists()) {
+            return null;
         }
-        return false;
+        try {
+            Properties props = new Properties();
+            props.load(new FileInputStream(config));
+            return props.getProperty(key);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected String getAssumedRoleARN() {
+        if (System.getenv(roleArnKey) != null) {
+            return System.getenv(roleArnKey);
+        } else {
+            return getAssumedRoleVariableFromConfigFile(roleArnKey);
+        }
+    }
+
+    protected String getAssumedRoleSessionName() {
+        if (System.getenv(roleSessionName) != null) {
+            return System.getenv(roleSessionName);
+        } else {
+            return getAssumedRoleVariableFromConfigFile(roleSessionName);
+        }
+    }
+
+    protected boolean isAssumedRoleRequested() {
+        return getAssumedRoleARN() != null && getAssumedRoleSessionName() != null;
     }
 
     @Override
