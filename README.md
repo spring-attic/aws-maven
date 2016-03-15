@@ -6,11 +6,11 @@ the component, but as long as we are using it actively we will update it as we n
 
 Wagon also works with Leiningen out of the box.
 
-Add following to your project.clj
+Add following to your `project.clj`
 
     :plugins [[fi.yle.tools/aws-maven "1.1.0"]]
-    :plugin-repositories [["yle-repo" {:url "http://maven.c4.yle.fi/release"
-                                     :snapshots false}]]
+    :plugin-repositories [["yle-repo" {:url       "http://maven.c4.yle.fi/release"
+                                       :snapshots false}]]
 
 ## Building and deploying this wagon
 
@@ -48,7 +48,7 @@ And plugin dependency:
       <extension>
       <groupId>fi.yle.tools</groupId>
       <artifactId>aws-maven</artifactId>
-      <version>1.0.0</version>
+      <version>1.3.0</version>
       </extension>
       ...
     </extensions>
@@ -114,11 +114,31 @@ Alternatively, the access and secret keys for the account can be provided using
 
 ## Using IAM roles
 
+### By using environment variables
+
 If users want to / or need to use roles while accessing services, an assumed role can be taken into use by defining two environment variables.
 
+```bash
 export AWS_ASSUME_ROLE_ARN="ARN:TO:ROLE"
+export AWS_ASSUME_ROLE_NAME="session-name-for-role"
+```
 
-export AWS_ASSUME_ROLE_NAME="session-name-for-role
+#### By using project specific config file
+
+Alternative way is to create `.s3_config` file to the project root folder (syntax follows Java `.properties` file syntax):
+```
+# .s3_config
+AWS_ASSUME_ROLE_ARN=ARN:TO:ROLE
+AWS_ASSUME_ROLE_NAME=session-name-for-role
+```
+
+If you want to use different filename / path for your config file, you can use 
+`S3_MAVEN_CONFIG_FILE=<path-to-your-config-file>` environment variable.
+
+#### Config precedence
+
+1. Use environment variables if they exist
+2. If environment variables don't exist, try to use config file
 
 
 ## Making Artifacts Public

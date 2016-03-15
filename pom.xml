@@ -7,7 +7,7 @@
   <groupId>fi.yle.tools</groupId>
   <artifactId>aws-maven</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <name>Amazon Web Services S3 Maven Wagon Support</name>
   <description>Standard Maven wagon support for s3:// urls and IAM roles</description>
 
