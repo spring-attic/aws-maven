@@ -135,6 +135,10 @@ AWS_ASSUME_ROLE_NAME=session-name-for-role
 If you want to use different filename / path for your config file, you can use 
 `S3_MAVEN_CONFIG_FILE=<path-to-your-config-file>` environment variable.
 
+#### Config precedence
+
+1. Use environment variables if they exist
+2. If environment variables don't exist, try to use config file
 
 
 ## Making Artifacts Public
