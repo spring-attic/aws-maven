@@ -53,6 +53,8 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
 
     private static final String RESOURCE_FORMAT = "%s(.*)";
 
+    private static final String asuDisabledKey = "AWS_ASSUME_ROLE_DISABLED";
+
     private static final String roleArnKey = "AWS_ASSUME_ROLE_ARN";
 
     private static final String roleSessionName = "AWS_ASSUME_ROLE_NAME";
@@ -159,6 +161,10 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     }
 
     protected boolean isAssumedRoleRequested() {
+        String disabled = System.getenv(asuDisabledKey);
+        if (disabled != null && ("true".equals(disabled.toLowerCase()) || "1".equals(disabled))) {
+            return false;
+        }
         return getAssumedRoleARN() != null && getAssumedRoleSessionName() != null;
     }
 
