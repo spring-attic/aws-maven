@@ -135,6 +135,13 @@ AWS_ASSUME_ROLE_NAME=session-name-for-role
 If you want to use different filename / path for your config file, you can use 
 `S3_MAVEN_CONFIG_FILE=<path-to-your-config-file>` environment variable.
 
+### Disabling ASU
+
+If you want to disable IAM roles usage (although you've set the environment variables), 
+e.g. for your CI system, you can do it by defining an environment variable
+`AWS_ASSUME_ROLE_DISABLED=true`. 
+
+
 #### Config precedence
 
 1. Use environment variables if they exist
