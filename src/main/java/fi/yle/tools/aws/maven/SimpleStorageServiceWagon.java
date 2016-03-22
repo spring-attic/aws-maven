@@ -159,7 +159,9 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
     }
 
     protected boolean isAssumedRoleRequested() {
-        return getAssumedRoleARN() != null && getAssumedRoleSessionName() != null;
+        String role = getAssumedRoleARN();
+        String session = getAssumedRoleSessionName();
+        return role != null && session != null && !role.trim().isEmpty() && !session.trim().isEmpty();
     }
 
     @Override
