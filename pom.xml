@@ -134,7 +134,7 @@
       <extension>
         <groupId>fi.yle.tools</groupId>
         <artifactId>aws-maven</artifactId>
-        <version>1.2.0</version>
+        <version>1.4.0</version>
       </extension>
     </extensions>
   </build>
