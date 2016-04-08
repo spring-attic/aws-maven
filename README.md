@@ -8,7 +8,7 @@ Wagon also works with Leiningen out of the box.
 
 Add following to your `project.clj`
 
-    :plugins [[fi.yle.tools/aws-maven "1.1.0"]]
+    :plugins [[fi.yle.tools/aws-maven "1.4.0"]]
     :plugin-repositories [["yle-repo" {:url       "http://maven.c4.yle.fi/release"
                                        :snapshots false}]]
 
@@ -48,7 +48,7 @@ And plugin dependency:
       <extension>
       <groupId>fi.yle.tools</groupId>
       <artifactId>aws-maven</artifactId>
-      <version>1.3.0</version>
+      <version>1.4.0</version>
       </extension>
       ...
     </extensions>
