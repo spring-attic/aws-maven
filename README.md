@@ -163,6 +163,38 @@ EOF
 aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
 ```
 
+Note that this plugin doesn't set an explicit ACL for each artifact uploaded. Instead it is adviced that you create a
+resource-based permission attached to the bucket. So if you set it to be public, all uploaded artifact become public.
+
+To make your bucket public, you can use the [aws console](console.aws.amazon.com), or if you prefer command line
+use [aws cli](http://aws.amazon.com/documentation/cli/). Installation is descrebed in the  [docs](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html).
+
+Here is a short script to make you bucket public
+```
+BUCKET=my-maven-repo-bucket
+TIMESTAMP=$(date +%Y%m%d%H%M)
+POLICY=$(cat<<EOF
+{
+    "Version": "2008-10-17",
+    "Id": "s3-public-read-$TIMESTAMP",
+    "Statement": [
+        {
+            "Sid": "Stmt-$TIMESTAMP",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::$BUCKET/*"
+        }
+    ]
+}
+EOF
+)
+ 
+aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
+```
+
 [aws-maven]: http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.springframework.build%22%20AND%20a%3A%22aws-maven%22
 [cli]: http://aws.amazon.com/documentation/cli/
 [console]: https://console.aws.amazon.com/s3
