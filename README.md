@@ -26,14 +26,14 @@ To get the dependency add to your pom:
 
 
 ```xml
-<repositories>
-    <repository>
+<pluginRepositories>
+    <pluginRepository>
       <id>yle-public</id>
       <name>Yle public repository</name>
       <url>http://maven.c4.yle.fi/release</url>
       <layout>default</layout>
-    </repository>
-</repositories>
+    </pluginRepository>
+</pluginRepositories>
 ```
 
 And plugin dependency:
