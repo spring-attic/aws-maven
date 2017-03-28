@@ -26,7 +26,8 @@ enum Region {
     ASIA_PACIFIC_SINGAPORE("ap-southeast-1", "s3-ap-southeast-1.amazonaws.com"), //
     ASIA_PACIFIC_SYDNEY("ap-southeast-2", "s3-ap-southeast-2.amazonaws.com"), //
     ASIA_PACIFIC_TOKYO("ap-northeast-1", "s3-ap-northeast-1.amazonaws.com"), //
-    SOUTH_AMERICA_SAO_PALO("sa-east-1", "s3-sa-east-1.amazonaws.com");
+    SOUTH_AMERICA_SAO_PALO("sa-east-1", "s3-sa-east-1.amazonaws.com"), //
+    CA_CENTRAL("ca_central_1", "s3-ca-central-1.amazonaws.com");
 
     private final String locationConstraint;
 
