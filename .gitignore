@@ -1,4 +1,12 @@
-.idea/libraries
-.idea/tasks.xml
-.idea/workspace.xml
 target
+.settings
+.springBeans
+.classpath
+.project
+/.idea
+/.gradle
+/build
+/*.iml
+/*.ipr
+/*.iws
+bin/

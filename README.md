@@ -73,6 +73,8 @@ Alternatively, the access and secret keys for the account can be provided using
 * `AWS_ACCESS_KEY_ID` (or `AWS_ACCESS_KEY`) and `AWS_SECRET_KEY` (or `AWS_SECRET_ACCESS_KEY`) [environment variables][env-var]
 * `aws.accessKeyId` and `aws.secretKey` [system properties][sys-prop]
 * The Amazon EC2 [Instance Metadata Service][instance-metadata]
+* Loads the AWS credential profiles file from the default location (`~/.aws/credentials`) or from an alternate location 
+if `AWS_CREDENTIAL_PROFILES_FILE` is set [AWS configuration profiles][profile-prop], [Config file details][profile-file-loc]
 
 ## Making Artifacts Public
 This wagon doesn't set an explict ACL for each artfact that is uploaded.  Instead you should create an AWS Bucket Policy to set permissions on objects.  A bucket policy can be set in the [AWS Console][console] and can be generated using the [AWS Policy Generator][policy-generator].
@@ -171,4 +173,6 @@ aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
 [policy-generator]: http://awspolicygen.s3.amazonaws.com/policygen.html
 [s3]: http://aws.amazon.com/s3/
 [sys-prop]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/SystemPropertiesCredentialsProvider.html
+[profile-prop]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/profile/ProfileCredentialsProvider.html
+[profile-file-loc]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/profile/ProfilesConfigFile.html#ProfilesConfigFile--
 [wagon]: http://maven.apache.org/wagon/

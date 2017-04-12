@@ -20,6 +20,7 @@ import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.SystemPropertiesCredentialsProvider;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
 
 final class AuthenticationInfoAWSCredentialsProviderChain extends AWSCredentialsProviderChain {
@@ -27,7 +28,8 @@ final class AuthenticationInfoAWSCredentialsProviderChain extends AWSCredentials
     AuthenticationInfoAWSCredentialsProviderChain(AuthenticationInfo authenticationInfo) {
         super(new EnvironmentVariableCredentialsProvider(),
                 new SystemPropertiesCredentialsProvider(),
-                new InstanceProfileCredentialsProvider(),
-                new AuthenticationInfoAWSCredentialsProvider(authenticationInfo));
+                InstanceProfileCredentialsProvider.getInstance(),
+                new AuthenticationInfoAWSCredentialsProvider(authenticationInfo),
+                new ProfileCredentialsProvider());
     }
 }
