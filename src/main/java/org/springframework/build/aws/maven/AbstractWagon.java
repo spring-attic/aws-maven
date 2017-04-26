@@ -239,7 +239,22 @@ abstract class AbstractWagon implements Wagon {
         File[] files = sourceDirectory.listFiles();
         if (files != null) {
             for (File f : files) {
-                put(f, destinationDirectory + "/" + f.getName());
+                if(f.isDirectory())
+                {
+                    putDirectory(f, f.getName());
+                }
+                else
+                {
+                    StringBuilder destination = new StringBuilder();
+                    if(!"./".equals(destinationDirectory))
+                    {
+                        destination.append(destinationDirectory);
+                        destination.append("/");
+                    }
+                    destination.append(f.getName());
+
+                    put(f, destination.toString());
+                }
             }
         }
     }
