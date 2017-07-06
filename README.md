@@ -176,14 +176,12 @@ aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
 ## Usage in deploy:deploy-file
 If you'd like to use aws-maven via `mvn deploy:deploy-file` to deploy non-maven jars to your s3 maven repo, you might want to install the aws-maven wagon provider and all of its dependencies into your maven installation's lib directory, so that the aws-maven wagon provider is available outside of the context of a project and its pom.xml. Here's one way to do that:
 
-1. Uncomment the section in this project's pom.xml containing the shaded jar build.
+1. Build this project
 
-2. Build this project
-
-		mvn clean package
+		mvn clean package -PshadedWagon
  or if you find that an integration test fails
  
- 		mvn -DskipTests=true clean package
+ 		mvn -DskipTests=true clean package -PshadedWagon
  	
 3. Copy the shaded jar into your $MAVEN_HOME/lib
 
