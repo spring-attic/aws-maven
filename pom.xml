@@ -117,29 +117,35 @@
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>2.2</version>
             </plugin>
-                        <!-- Uncomment this section to build a shaded jar
-                             (which you can install into your $MAVEN_HOME/lib
-                             in order to use aws-maven via 'mvn deploy:deploy-file')
-                        -->
-                        <!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<outputFile>target/aws-maven-wagon.jar</outputFile>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			-->
 		</plugins>
 	</build>
+	
+	<profiles>
+		<profile>
+			<!-- Activate this profile to build a shaded jar (which you can install into your $MAVEN_HOME/lib in order to use aws-maven via 'mvn deploy:deploy-file') -->
+			<id>shadedWagon</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>3.0.0</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+								<configuration>
+									<outputFile>target/aws-maven-wagon.jar</outputFile>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<url>https://github.com/spring-projects/aws-maven</url>
 
