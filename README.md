@@ -9,7 +9,7 @@ Wagon also works with Leiningen out of the box.
 Add following to your `project.clj`
 
     :plugins [[fi.yle.tools/aws-maven "1.4.0"]]
-    :plugin-repositories [["yle-repo" {:url       "http://maven.c4.yle.fi/release"
+    :plugin-repositories [["yle-repo" {:url       "https://maven.yle.fi/release"
                                        :snapshots false}]]
 
 ## Building and deploying this wagon
@@ -20,7 +20,7 @@ mvn deploy
 
 ## Usage
 To publish Maven artifacts to S3 a build extension must be defined in a project's `pom.xml`.  The latest version of the wagon can 
-be found from from YLE public mvn repository http://maven.c4.yle.fi/release
+be found from from YLE public mvn repository https://maven.yle.fi/release
 
 To get the dependency add to your pom:
 
@@ -30,7 +30,7 @@ To get the dependency add to your pom:
     <pluginRepository>
       <id>yle-public</id>
       <name>Yle public repository</name>
-      <url>http://maven.c4.yle.fi/release</url>
+      <url>https://maven.yle.fi/release</url>
       <layout>default</layout>
     </pluginRepository>
 </pluginRepositories>

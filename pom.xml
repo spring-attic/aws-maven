@@ -15,7 +15,7 @@
     <pluginRepository>
       <id>yle-public</id>
       <name>Yle public repository</name>
-      <url>http://maven.c4.yle.fi/release</url>
+      <url>https://maven.yle.fi/release</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
