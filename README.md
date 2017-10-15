@@ -172,3 +172,40 @@ aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
 [s3]: http://aws.amazon.com/s3/
 [sys-prop]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/SystemPropertiesCredentialsProvider.html
 [wagon]: http://maven.apache.org/wagon/
+
+## Usage in deploy:deploy-file
+If you'd like to use aws-maven via `mvn deploy:deploy-file` to deploy non-maven jars to your s3 maven repo, you might want to install the aws-maven wagon provider and all of its dependencies into your maven installation's lib directory, so that the aws-maven wagon provider is available outside of the context of a project and its pom.xml. Here's one way to do that:
+
+1. Build this project
+
+		mvn clean package -PshadedWagon
+ or if you find that an integration test fails
+ 
+ 		mvn -DskipTests=true clean package -PshadedWagon
+ 	
+3. Copy the shaded jar into your $MAVEN_HOME/lib
+
+ First, find your maven home:
+
+		$ mvn -v
+		Apache Maven 3.2.3 (33f8c3e1027c3ddde99d3cdebad2656a31e8fdf4; 2014-08-11T16:58:10-04:00)
+		Maven home: /usr/local/Cellar/maven/3.2.3/libexec
+		Java version: 1.7.0_40, vendor: Oracle Corporation
+		Java home: /Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/jre
+		Default locale: en_US, platform encoding: UTF-8
+		OS name: "mac os x", version: "10.9.5", arch: "x86_64", family: "mac"
+	
+ Now copy the shaded jar into your maven home:
+
+		cp target/aws-maven-wagon.jar /usr/local/Cellar/maven/3.2.3/libexec/lib
+	
+4. Deploy your non-maven jar using a deploy:deploy-file command similar to this:
+	
+		mvn deploy:deploy-file \
+		    -Dfile=example.jar \
+		    -DgroupId=com.example \
+		    -DartifactId=example \
+		    -Dversion=1.0.0 \
+		    -Dpackaging=jar \
+		    -DrepositoryId=aws-release \
+		    -Durl=s3://<BUCKET>/release
