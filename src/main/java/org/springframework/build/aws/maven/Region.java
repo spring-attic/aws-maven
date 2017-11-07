@@ -22,7 +22,7 @@ enum Region {
     US_WEST_NORTHERN_CALIFORNIA("us-west-1", "s3-us-west-1.amazonaws.com"), //
     EU("EU", "s3-eu-west-1.amazonaws.com"), //
     EU_IRELAND("eu-west-1", "s3-eu-west-1.amazonaws.com"), //
-    GOV_CLOUD("us-gov-west-1", "us-gov-west-1.amazonaws.com"), //
+    GOV_CLOUD("us-gov-west-1", "s3-us-gov-west-1.amazonaws.com"), //
     ASIA_PACIFIC_SINGAPORE("ap-southeast-1", "s3-ap-southeast-1.amazonaws.com"), //
     ASIA_PACIFIC_SYDNEY("ap-southeast-2", "s3-ap-southeast-2.amazonaws.com"), //
     ASIA_PACIFIC_TOKYO("ap-northeast-1", "s3-ap-northeast-1.amazonaws.com"), //
