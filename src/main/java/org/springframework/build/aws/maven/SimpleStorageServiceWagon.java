@@ -245,7 +245,7 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(0);
 
-        return new PutObjectRequest(this.bucketName, key, inputStream, objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead);
+        return new PutObjectRequest(this.bucketName, key, inputStream, objectMetadata);
     }
 
 }
