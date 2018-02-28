@@ -91,6 +91,7 @@ public final class SimpleStorageServiceWagonIntegrationTest {
         } else {
             buckets.add("test.aws-maven.ireland");
             buckets.add("test.aws-maven.eu");
+            buckets.add("test.aws-maven.eu-uk");
             buckets.add("test.aws-maven.northern-california");
             buckets.add("test.aws-maven.oregon");
             buckets.add("test.aws-maven.sao-paulo");
