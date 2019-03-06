@@ -75,7 +75,7 @@ Alternatively, the access and secret keys for the account can be provided using
 * The Amazon EC2 [Instance Metadata Service][instance-metadata]
 
 ## Making Artifacts Public
-This wagon doesn't set an explict ACL for each artfact that is uploaded.  Instead you should create an AWS Bucket Policy to set permissions on objects.  A bucket policy can be set in the [AWS Console][console] and can be generated using the [AWS Policy Generator][policy-generator].
+This wagon doesn't set an explicit ACL for each artfact that is uploaded.  Instead you should create an AWS Bucket Policy to set permissions on objects.  A bucket policy can be set in the [AWS Console][console] and can be generated using the [AWS Policy Generator][policy-generator].
 
 In order to make the contents of a bucket public you need to add statements with the following details to your policy:
 
