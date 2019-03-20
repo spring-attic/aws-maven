@@ -163,12 +163,12 @@ EOF
 aws s3api put-bucket-policy --bucket $BUCKET --policy "$POLICY"
 ```
 
-[aws-maven]: http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.springframework.build%22%20AND%20a%3A%22aws-maven%22
-[cli]: http://aws.amazon.com/documentation/cli/
+[aws-maven]: https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.springframework.build%22%20AND%20a%3A%22aws-maven%22
+[cli]: https://aws.amazon.com/documentation/cli/
 [console]: https://console.aws.amazon.com/s3
-[env-var]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/EnvironmentVariableCredentialsProvider.html
-[instance-metadata]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/InstanceProfileCredentialsProvider.html
-[policy-generator]: http://awspolicygen.s3.amazonaws.com/policygen.html
-[s3]: http://aws.amazon.com/s3/
-[sys-prop]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/SystemPropertiesCredentialsProvider.html
-[wagon]: http://maven.apache.org/wagon/
+[env-var]: https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/EnvironmentVariableCredentialsProvider.html
+[instance-metadata]: https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/InstanceProfileCredentialsProvider.html
+[policy-generator]: https://awspolicygen.s3.amazonaws.com/policygen.html
+[s3]: https://aws.amazon.com/s3/
+[sys-prop]: https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/SystemPropertiesCredentialsProvider.html
+[wagon]: https://maven.apache.org/wagon/
